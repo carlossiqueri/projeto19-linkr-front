@@ -2,14 +2,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const SignupForm = () => {
+const SigninForm = ({ setSession }) => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = React.useState(true);
   const [form, setForm] = React.useState({
     email: "",
     password: "",
-    username: "",
-    picture_url: "",
   });
 
   function updateForm(e) {
@@ -21,7 +19,7 @@ const SignupForm = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.email || !form.password || !form.picture_url || !form.username) {
+    if (!form.email || !form.password) {
       return alert("Por favor, preencha todos os campos!");
     }
 
@@ -29,17 +27,16 @@ const SignupForm = () => {
       const serverUrl = process.env.REACT_APP_API_URL;
 
       setActiveButton((prevState) => !prevState);
-      const res = await axios.post(`${serverUrl}signup`, form);
+      const res = await axios.post(`${serverUrl}`, form);
       setActiveButton((prevState) => !prevState);
 
-      if (res.status === 201) {
-        navigate("/");
+      if (res.status === 200) {
+        setSession(res.data.token);
+        navigate("/timeline");
       }
     } catch (err) {
       if (err.response.status === 401) {
-        alert("Verifique os campos preenchidos e tente novamente");
-      } else if (err.response.status === 422) {
-        alert("Username ou Email já estão sendo utilizados");
+        alert("Email ou senha inválidas");
       }
       setActiveButton((prevState) => !prevState);
     }
@@ -60,24 +57,10 @@ const SignupForm = () => {
         type="password"
         placeholder="password"
       />
-      <input
-        onChange={updateForm}
-        value={form.username}
-        name="username"
-        type="text"
-        placeholder="username"
-      />
-      <input
-        onChange={updateForm}
-        value={form.picture_url}
-        name="picture_url"
-        type="url"
-        placeholder="picture_url"
-      />
-      <button disabled={!activeButton}>Sign Up</button>
-      <Link to="/">Switch back to log in</Link>
+      <button disabled={!activeButton}>Log In</button>
+      <Link to="/signup">First time? Create an account!</Link>
     </form>
   );
 };
 
-export default SignupForm;
+export default SigninForm;
