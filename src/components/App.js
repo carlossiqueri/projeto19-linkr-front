@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignupPage from "./SignupPage/SignupPage";
 import SigninPage from "./SigninPage/SigninPage";
 import React from "react";
-import Homepage from "/home/lorena/projeto19-linkr-front/src/pages/Homepage";
+import Homepage from "../pages/Homepage";
 
 function App() {
   const [session, setSession] = React.useState(null);
