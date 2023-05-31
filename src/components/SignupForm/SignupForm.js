@@ -29,7 +29,7 @@ const SignupForm = () => {
       const serverUrl = process.env.REACT_APP_API_URL;
 
       setActiveButton((prevState) => !prevState);
-      const res = await axios.post(`${serverUrl}signup`, form);
+      const res = await axios.post(`${serverUrl}/signup`, form);
       setActiveButton((prevState) => !prevState);
 
       if (res.status === 201) {
