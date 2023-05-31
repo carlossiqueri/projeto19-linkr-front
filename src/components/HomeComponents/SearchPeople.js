@@ -9,7 +9,7 @@ export default function SearchPeople(){
     )
 }
 
-const Search = styled.container`
+const Search = styled.p`
 display:flex;
 justify-content: space-between;
 width: 40%;
