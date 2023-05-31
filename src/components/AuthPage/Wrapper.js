@@ -69,6 +69,27 @@ const Wrapper = styled.div`
     text-decoration-line: underline;
     color: #ffffff;
   }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 3fr;
+    h1 {
+      font-size: 76px;
+    }
+    h2 {
+      font-size: 23px;
+      line-height: 34px;
+    }
+    > div {
+      margin: 0;
+      display: grid;
+      justify-items: center;
+      align-self: center;
+    }
+    form {
+      align-content: flex-start;
+    }
+  }
 `;
 
 export default Wrapper;
