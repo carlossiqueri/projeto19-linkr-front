@@ -1,139 +1,191 @@
 import styled from "styled-components";
 import Header from "../components/Header";
+import { useContext, useState } from "react";
+import axios from "axios";
+import { InfoContext } from "../context/InfoContext";
 
-export default function Homepage(){
-    return(
-        <HomepageContainer>
-            <Header />
+export default function Homepage() {
+  const [form, setForm] = useState({ url: "", description: "" });
+  const [disabled, setDisabled] = useState(false);
+  const { token } = useContext(InfoContext);
 
-            <FeedContainer>
-                <p>timeline</p>
+  function handleForm(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
-                <span>
-                    <img />
-                    <div>
-                    <p>What are you going to share today?</p>
+  function createPost(e) {
+    e.preventDefault();
 
-                    <input
-                    required
-                    placeholder="http://..."
-                    type="text"
-                     />
+    setDisabled(true);
 
-                    <textarea
-                    required
-                    placeholder="Awesome article about #javascript"
-                    type="text"
-                     />
+    setTimeout(() => {
+      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
+      const body = { url: form.url, description: form.description };
+      const config= {
+          headers:{
+              Authorization: `Bearer ${token}`
+          }
+      }
+      const promise = axios.post(urlPost, body, config);
+      promise.then((res) => {
+        console.log("Deu certo!!!");
+      });
+      promise.catch((err) => {
+        console.log(err.response.data);
+        alert("Houve um erro ao publicar seu link");
+        setDisabled(false);
+      });
+      promise.finally(() => {
+        setDisabled(false);
+      });
+    }, 3000);
+  }
 
-                     <button> Publish </button>
+  return (
+    <HomepageContainer>
+      <Header />
 
-                    </div>
-                </span>
-            </FeedContainer>
+      <FeedContainer>
+        <p>timeline</p>
 
-        </HomepageContainer>
-    )
+        <span>
+          <img />
+          <div>
+            <p>What are you going to share today?</p>
+
+            <form onSubmit={createPost}>
+              <input
+                required
+                placeholder="http://..."
+                type="text"
+                name="url"
+                value={form.url}
+                onChange={handleForm}
+                disabled={disabled}
+              />
+
+              <textarea
+                placeholder="Awesome article about #javascript"
+                type="text"
+                name="description"
+                value={form.description}
+                onChange={handleForm}
+                disabled={disabled}
+              />
+
+              {disabled ? (
+                <button disabled={disabled}> Publishing... </button>
+              ) : (
+                <button> Publish </button>
+              )}
+            </form>
+          </div>
+        </span>
+      </FeedContainer>
+    </HomepageContainer>
+  );
 }
 
 const HomepageContainer = styled.section`
-display: flex;
-flex-direction: column;
-align-items: center;
-background-color: #333333;
-width: 100%;
-height: 100vh;
-`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #333333;
+  width: 100%;
+  height: 100vh;
+`;
 
 const FeedContainer = styled.div`
-width: 50%;
-margin-top: 148px;
-display: flex;
-flex-direction: column;
+  width: 50%;
+  margin-top: 148px;
+  display: flex;
+  flex-direction: column;
 
-p {
-   font-family: 'Oswald', sans-serif;
-   font-weight: 700;
-   font-size: 43px;
-   line-height: 63.73px;
-   color: #FFFFFF;
-}
+  p {
+    font-family: "Oswald", sans-serif;
+    font-weight: 700;
+    font-size: 43px;
+    line-height: 63.73px;
+    color: #ffffff;
+  }
 
-span {
+  span {
     width: 611px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 16px;
     display: flex;
-   margin-top: 43px;
+    margin-top: 43px;
 
     img {
-        width: 50px;
-        height: 50px;
-        background-color: purple;
-        border-radius: 26.5px;
-        margin: 16px;
+      width: 50px;
+      height: 50px;
+      background-color: purple;
+      border-radius: 26.5px;
+      margin: 16px;
     }
 
-    div{ 
-        display: flex;
-        flex-direction: column;
-        width: 502px;
-        position: relative;
+    div {
+      display: flex;
+      flex-direction: column;
+      width: 502px;
+      position: relative;
 
-        p{ 
-        font-family: 'Lato', sans-serif;
+      p {
+        font-family: "Lato", sans-serif;
         font-weight: 300;
         font-size: 20px;
         line-height: 24px;
         color: #707070;
         margin-top: 21px;
         margin-bottom: 10px;
-    }
+      }
 
-    input {
-        background-color: #EFEFEF;
-        border-radius: 5px;
-        border: none;
-        width: 100%;
-        padding: 10px 0 10px 10px;
-        outline: none;
-        margin-bottom: 5px;
+      form {
+        display: flex;
+        flex-direction: column;
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: #949494;
-        
-    }
+        input {
+          background-color: #efefef;
+          border-radius: 5px;
+          border: none;
+          width: 100%;
+          padding: 10px 0 10px 10px;
+          outline: none;
+          margin-bottom: 5px;
 
-    textarea {
-        height: 66px;
-        padding: 10px 10px;
-        border: none;
-        border-radius: 5px;
-        background-color: #EFEFEF;
-        outline: none;
-        margin-bottom: 8px;
-        resize: none;
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: #949494;
+        }
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: #949494;
+        textarea {
+          height: 66px;
+          padding: 10px 10px;
+          border: none;
+          border-radius: 5px;
+          background-color: #efefef;
+          outline: none;
+          margin-bottom: 8px;
+          resize: none;
 
-    }
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: #949494;
+        }
+      }
 
-
-    button {
-        background-color: #1877F2;
-        font-family: 'Lato', sans-serif;
+      button {
+        background-color: #1877f2;
+        font-family: "Lato", sans-serif;
         font-weight: 700;
         font-size: 14px;
         line-height: 16.8px;
-        color: #FFFFFF;
+        color: #ffffff;
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -141,12 +193,7 @@ span {
         width: 112px;
         margin-bottom: 16px;
         margin-left: 400px;
-
-        
+      }
     }
-
-    }
-
-   
-}
-`
+  }
+`;
