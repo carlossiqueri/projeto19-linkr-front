@@ -37,7 +37,7 @@ const SignupForm = () => {
       console.log(newUrl);
 
       setActiveButton((prevState) => !prevState);
-      const res = await axios.post(`${newUrl.toString()}/signup`, form);
+      const res = await axios.post(`${newUrl.join("")}/signup`, form);
       setActiveButton((prevState) => !prevState);
 
       if (res.status === 201) {
