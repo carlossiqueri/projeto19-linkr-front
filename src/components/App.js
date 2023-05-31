@@ -30,7 +30,15 @@ function App() {
             />
           }
         />
-        <Route path="/homepage" element={<Homepage />} />
+        <Route
+          path="/homepage"
+          element={
+            <Homepage
+              setIsAuthenticated={setIsAuthenticated}
+              setSession={setSession}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

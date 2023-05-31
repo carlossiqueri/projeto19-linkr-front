@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import Header from "../components/Header";
 
-export default function Homepage() {
+export default function Homepage({ setIsAuthenticated, setSession }) {
   return (
     <HomepageContainer>
-      <Header />
+      <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer>
         <p>timeline</p>
