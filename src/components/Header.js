@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import SearchPeople from "../components/HomeComponents/SearchPeople.js"
 
 export default function Header({ setIsAuthenticated, setSession }) {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ export default function Header({ setIsAuthenticated, setSession }) {
   return (
     <HeaderContainer>
       <p>linkr</p>
+
+      <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
         <ion-icon name={typeIonIcon}></ion-icon> <img />
       </span>

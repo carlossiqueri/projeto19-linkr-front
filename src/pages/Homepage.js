@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Header from "../components/Header";
+import Title from "../components/HomeComponents/Title.js"
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   return (
@@ -7,7 +8,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer>
-        <p>timeline</p>
+        <Title />
 
         <span>
           <img />
