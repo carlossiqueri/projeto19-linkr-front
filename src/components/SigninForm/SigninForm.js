@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const SigninForm = ({ setSession }) => {
+const SigninForm = ({ setSession, setIsAuthenticated }) => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = React.useState(true);
   const [form, setForm] = React.useState({
@@ -32,6 +32,8 @@ const SigninForm = ({ setSession }) => {
 
       if (res.status === 200) {
         setSession(res.data.token);
+        localStorage.setItem("token", res.data.token);
+        setIsAuthenticated(true);
         navigate("/timeline");
       }
     } catch (err) {

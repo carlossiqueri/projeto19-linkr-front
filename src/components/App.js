@@ -6,11 +6,30 @@ import Homepage from "../pages/Homepage";
 
 function App() {
   const [session, setSession] = React.useState(null);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      setSession(token);
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/" element={<SigninPage setSession={setSession} />} />
+        <Route
+          path="/"
+          element={
+            <SigninPage
+              setSession={setSession}
+              setIsAuthenticated={setIsAuthenticated}
+            />
+          }
+        />
         <Route path="/homepage" element={<Homepage />} />
       </Routes>
     </BrowserRouter>
