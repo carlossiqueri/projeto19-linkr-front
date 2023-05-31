@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { InfoContext } from "../../context/InfoContext";
 
-const SigninForm = ({ setSession }) => {
+const SigninForm = ({ setSession, setIsAuthenticated }) => {
   const navigate = useNavigate();
   const {setToken} = useContext(InfoContext);
   const [activeButton, setActiveButton] = React.useState(true);
@@ -34,6 +34,8 @@ const SigninForm = ({ setSession }) => {
 
       if (res.status === 200) {
         setSession(res.data.token);
+        localStorage.setItem("token", res.data.token);
+        setIsAuthenticated(true);
         setToken(res.data.token);
         navigate("/homepage");
       }
