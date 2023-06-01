@@ -3,6 +3,7 @@ import SignupPage from "./SignupPage/SignupPage";
 import SigninPage from "./SigninPage/SigninPage";
 import React from "react";
 import Homepage from "../pages/Homepage";
+import { InfoProvider } from "../context/InfoContext";
 
 function App() {
   const [session, setSession] = React.useState(null);
@@ -19,6 +20,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <InfoProvider>
       <Routes>
         <Route path="/signup" element={<SignupPage />} />
         <Route
@@ -40,6 +42,7 @@ function App() {
           }
         />
       </Routes>
+      </InfoProvider>
     </BrowserRouter>
   );
 }

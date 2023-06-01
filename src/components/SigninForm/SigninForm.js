@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { InfoContext } from "../../context/InfoContext";
 
 const SigninForm = ({ setSession, setIsAuthenticated }) => {
   const navigate = useNavigate();
+  const {setToken} = useContext(InfoContext);
   const [activeButton, setActiveButton] = React.useState(true);
   const [form, setForm] = React.useState({
     email: "",
@@ -34,7 +36,8 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         setSession(res.data.token);
         localStorage.setItem("token", res.data.token);
         setIsAuthenticated(true);
-        navigate("/timeline");
+        setToken(res.data.token);
+        navigate("/homepage");
       }
     } catch (err) {
       if (err.response.status === 401) {
