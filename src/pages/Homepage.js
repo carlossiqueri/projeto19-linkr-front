@@ -3,11 +3,14 @@ import Header from "../components/Header";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
+import Title from "../components/HomeComponents/Title.js"
+
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
   const { token } = useContext(InfoContext);
+
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -49,6 +52,10 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
 
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
+
+      <FeedContainer>
+        <Title />
+
 
         <span>
           <img />
