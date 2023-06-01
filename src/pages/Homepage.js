@@ -53,7 +53,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
 
-      <FeedContainer>
+      
         <Title />
 
 
