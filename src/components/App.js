@@ -33,7 +33,7 @@ function App() {
           }
         />
         <Route
-          path="/homepage"
+          path="/timeline"
           element={
             <Homepage
               setIsAuthenticated={setIsAuthenticated}
