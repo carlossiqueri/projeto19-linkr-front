@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
 import Title from "../components/HomeComponents/Title.js"
+import PostContainer from "../components/PostsComponents/PostsContainer.js";
 
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
@@ -93,7 +94,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
                     </div>
                 </span>
             </FeedContainer>
-
+                <PostContainer />
         </HomepageContainer>
     )
 }
