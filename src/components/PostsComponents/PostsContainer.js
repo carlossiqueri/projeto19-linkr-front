@@ -83,7 +83,6 @@ const ContainerTimeline = styled.div`
 
 const Post = styled.div`
   display: flex;
-  padding-right: 20px;
   padding-bottom: 20px;
   width: 611px;
   background-color: #171717;
@@ -119,9 +118,12 @@ const PostDescription = styled.p`
 const PostLink = styled.div`
   font-family: "Lato", sans-serif;
   display: flex;
+  justify-content: space-between;
   border: 1px solid #4d4d4d;
   border-radius: 11px;
   margin-top: 10px;
+  width: 500px;
+  height: 155px;
   :hover{
     cursor: pointer;
   }
@@ -154,7 +156,7 @@ const LinkInfo = styled.div`
 `;
 
 const LinkImg = styled.img`
-  width: 125px;
-  height: 125px;
+  width: 155px;
+  height: 155px;
   border-radius: 0px 12px 13px 0px;
 `;

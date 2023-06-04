@@ -21,7 +21,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     setDisabled(true);
 
     setTimeout(() => {
-      const urlPost = `${process.env.REACT_APP_API_URL}newPost`;
+      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
       const body = { url: form.url, description: form.description };
       const config = {
         headers: {
@@ -87,7 +87,6 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
             </form>
           </div>
         </span>
-        
       </FeedContainer>
       <PostContainer />
     </HomepageContainer>
