@@ -1,33 +1,49 @@
 import styled from "styled-components";
 import React from "react";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios"
 
 export default function SearchPeople() {
   const searchRef = React.useRef();
   const [isOpenSearch, setIsOpenSearch] = React.useState(false);
+  const [isLoadingSearch, setIsLoadingSearch] = React.useState(false);
+  const [list, setList] = React.useState([])
+  const [form, setForm] = React.useState({
+    "searchValue":""
+  });
 
-  function toogleSearchUser() {
-    console.log("pesquisando");
-  }
+    function getList(searchValue){
+      setIsLoadingSearch(true);
+      axios.post(`${process.env.REACT_APP_API_URL}/users/list`,form)
+      .then((res)=> {
+        setIsLoadingSearch(false)
+        console.log(res.data)
+      })
+      .catch((err)=>{
+        setIsLoadingSearch(false);
+        alert(
+          "An error occured while trying to search users, please talk us"
+        );
+        console.log(err.response.data);
+      })
+    }
 
   function handleSearch(e) {
     if(e.target.value ==""){
       setIsOpenSearch(false)
-      console.log("some")
     }else{
       setIsOpenSearch(true)
-      console.log("aparece")
+      getList(e.target.value)
     }
-    console.log(e.target.value)
   }
   
-  console.log(isOpenSearch)
   return (
     <Search>
       <SearchInput>
         <input
-          required
           placeholder="Search for people"
+          value={form.searchValue}
           type="text"
           name="url"
           onChange={handleSearch}
@@ -80,6 +96,7 @@ const Icone = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 8px;
 `
 
 const SearchInput = styled.div`
