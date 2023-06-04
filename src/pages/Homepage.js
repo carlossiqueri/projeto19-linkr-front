@@ -108,11 +108,9 @@ const FeedContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-    
-.Title{
+  .Title {
     margin-left: 28px;
   }
-  
 
   p {
     font-family: "Oswald", sans-serif;
@@ -188,6 +186,9 @@ const FeedContainer = styled.div`
           font-weight: 300;
           line-height: 18px;
           color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+
+          span {
+          }
         }
       }
       button {
