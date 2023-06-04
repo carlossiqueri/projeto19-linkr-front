@@ -3,15 +3,13 @@ import Header from "../components/Header";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
-import Title from "../components/HomeComponents/Title.js"
+import Title from "../components/HomeComponents/Title.js";
 import PostContainer from "../components/PostsComponents/PostsContainer.js";
-
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
   const { token } = useContext(InfoContext);
-
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,15 +23,15 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     setTimeout(() => {
       const urlPost = `${process.env.REACT_APP_API_URL}newPost`;
       const body = { url: form.url, description: form.description };
-      const config= {
-          headers:{
-              Authorization: `Bearer ${token}`
-          }
-      }
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const promise = axios.post(urlPost, body, config);
       promise.then((res) => {
         console.log("Deu certo!!!");
-        setForm({url: "", description: ""});
+        setForm({ url: "", description: "" });
       });
       promise.catch((err) => {
         console.log(err.response.data);
@@ -46,17 +44,14 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     }, 3000);
   }
 
-
-    return(
-        <HomepageContainer>
-            <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
+  return (
+    <HomepageContainer>
+      <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
 
-      
         <Title />
-
 
         <span>
           <img />
@@ -64,39 +59,39 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
             <p>What are you going to share today?</p>
 
             <form onSubmit={createPost}>
-                    <input
-                    required
-                    placeholder="http://..."
-                    type="text"
-                    name="url"
-                    value={form.url}
-                    onChange={handleForm}
-                    disabled={disabled}
-                     />
+              <input
+                required
+                placeholder="http://..."
+                type="text"
+                name="url"
+                value={form.url}
+                onChange={handleForm}
+                disabled={disabled}
+              />
 
-                    <textarea
-                    required
-                    placeholder="Awesome article about #javascript"
-                    type="text"
-                    name="description"
-                    value={form.description}
-                    onChange={handleForm}
-                    disabled={disabled}
-                     />
+              <textarea
+                required
+                placeholder="Awesome article about #javascript"
+                type="text"
+                name="description"
+                value={form.description}
+                onChange={handleForm}
+                disabled={disabled}
+              />
 
-{disabled ? (
+              {disabled ? (
                 <button disabled={disabled}> Publishing... </button>
               ) : (
                 <button> Publish </button>
               )}
             </form>
-
-                    </div>
-                </span>
-            </FeedContainer>
-                <PostContainer />
-        </HomepageContainer>
-    )
+          </div>
+        </span>
+        
+      </FeedContainer>
+      <PostContainer />
+    </HomepageContainer>
+  );
 }
 
 const HomepageContainer = styled.section`
@@ -105,7 +100,7 @@ const HomepageContainer = styled.section`
   align-items: center;
   background-color: #333333;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 `;
 
 const FeedContainer = styled.div`
@@ -142,7 +137,6 @@ const FeedContainer = styled.div`
       display: flex;
       flex-direction: column;
       width: 502px;
-      
 
       p {
         font-family: "Lato", sans-serif;
@@ -157,39 +151,39 @@ const FeedContainer = styled.div`
         display: flex;
         flex-direction: column;
 
-    input {
-        background-color: #EFEFEF;
-        border-radius: 5px;
-        border: none;
-        width: 100%;
-        padding: 10px 0 10px 10px;
-        outline: none;
-        margin-bottom: 5px;
+        input {
+          background-color: #efefef;
+          border-radius: 5px;
+          border: none;
+          width: 100%;
+          padding: 10px 0 10px 10px;
+          outline: none;
+          margin-bottom: 5px;
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: ${({disabled}) => disabled  ? "#949494" : "#000000"};
-    }
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+        }
 
-    textarea {
-        height: 66px;
-        padding: 10px 10px;
-        border: none;
-        border-radius: 5px;
-        background-color: #EFEFEF;
-        outline: none;
-        margin-bottom: 8px;
-        resize: none;
-        width: 100%;
+        textarea {
+          height: 66px;
+          padding: 10px 10px;
+          border: none;
+          border-radius: 5px;
+          background-color: #efefef;
+          outline: none;
+          margin-bottom: 8px;
+          resize: none;
+          width: 100%;
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: ${({disabled}) => disabled ? "#949494" : "#000000"};
-    }
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+        }
       }
       button {
         background-color: #1877f2;
