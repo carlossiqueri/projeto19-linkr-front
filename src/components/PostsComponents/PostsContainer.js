@@ -3,11 +3,15 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
+
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -41,7 +45,15 @@ export default function PostContainer() {
                 <PostOwnerImg src={p.user_picture} />
                 <div>
                   <PostOwner>{p.username}</PostOwner>
-                  <PostDescription>{p.description}</PostDescription>
+                  <PostDescription>
+                    {p.description.split(" ").map((s, index) => {
+                      if(s.startsWith("#")){
+                        return <span key={index} onClick={() => navigate(`/hashtag/:${s}`)}>{` ${s} `}</span>
+                      }else{
+                        return <>{` ${s} `}</>
+                      }
+                    })}
+                    </PostDescription>
                   <PostLink  onClick={() => window.open(`${p.url}`, "_blank")}>
                     <LinkInfo>
                       <h3>{p.url_title}</h3>
@@ -113,6 +125,14 @@ const PostDescription = styled.p`
   font-size: 17px;
   line-height: 20px;
   color: #b7b7b7;
+  span{
+    font-weight: bold;
+    color: #FFFFFF;
+    :hover{
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
 `;
 
 const PostLink = styled.div`
