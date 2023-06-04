@@ -42,7 +42,7 @@ export default function Header({ setIsAuthenticated, setSession }) {
 
   return (
     <HeaderContainer>
-      <p>linkr</p>
+      <p className="Title">linkr</p>
 
       <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
@@ -84,6 +84,11 @@ const HeaderContainer = styled.section`
     margin-left: 28px;
   }
 
+  
+  .Title{
+    margin-left: 28px;
+  }
+  
   span {
     font-size: 25px;
     display: flex;

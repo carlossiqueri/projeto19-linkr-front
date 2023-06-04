@@ -108,6 +108,12 @@ const FeedContainer = styled.div`
   display: flex;
   flex-direction: column;
 
+    
+.Title{
+    margin-left: 28px;
+  }
+  
+
   p {
     font-family: "Oswald", sans-serif;
     font-weight: 700;
