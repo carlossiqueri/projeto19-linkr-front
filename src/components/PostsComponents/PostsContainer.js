@@ -62,10 +62,12 @@ export default function PostContainer() {
       );
       console.log(err.response.data);
     });
+  }
 
     function openModal() {
       setOpenedModal(true);
     }
+
   
     function deletePost(id) {
       setDelected(true);
@@ -400,4 +402,3 @@ const WhiteButton = styled.button`
   padding: 5px;
   width: 112px;
 `;
-}
