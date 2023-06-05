@@ -3,6 +3,9 @@ import Header from "../components/Header";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
+import Title from "../components/HomeComponents/Title.js";
+import PostContainer from "../components/PostsComponents/PostsContainer.js";
+import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
 import Modal from "react-modal";
 import ReactModal from "react-modal";
 import { ColorRing } from "react-loader-spinner";
@@ -24,7 +27,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     setDisabled(true);
 
     setTimeout(() => {
-      const urlPost = `${process.env.REACT_APP_API_URL}newPost`;
+      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
       const body = { url: form.url, description: form.description };
       const config = {
         headers: {
@@ -79,12 +82,15 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     
   }
 
-  return (
-    <HomepageContainer>
-      <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
+
+    return(
+        <HomepageContainer>
+            <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
+
+        <Title />
 
         <span>
           <img />
@@ -118,13 +124,15 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
                 <button> Publish </button>
               )}
             </form>
-
             <button onClick={openModal}>Teste</button>
-          </div>
-        </span>
-      </FeedContainer>
 
-      <StyledModal isOpen={openedModal} style={customStyles}>
+
+
+                    </div>
+                </span>
+            </FeedContainer>
+
+            <StyledModal isOpen={openedModal} style={customStyles}>
         <p>
           Are you sure you want <br /> to delete this post?
         </p>
@@ -151,8 +159,9 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         
         
       </StyledModal>
-    </HomepageContainer>
-  );
+
+        </HomepageContainer>
+    )
 }
 
 const HomepageContainer = styled.section`
@@ -161,14 +170,17 @@ const HomepageContainer = styled.section`
   align-items: center;
   background-color: #333333;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 `;
 
 const FeedContainer = styled.div`
-  width: 50%;
   margin-top: 148px;
   display: flex;
   flex-direction: column;
+
+  .Title {
+    margin-left: 28px;
+  }
 
   p {
     font-family: "Oswald", sans-serif;
@@ -239,12 +251,12 @@ const FeedContainer = styled.div`
           resize: none;
           width: 100%;
 
-          font-family: "Lato", sans-serif;
-          font-size: 15px;
-          font-weight: 300;
-          line-height: 18px;
-          color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
-        }
+        font-family: 'Lato', sans-serif;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 18px;
+        color: ${({disabled}) => disabled ? "#949494" : "#000000"};
+    }
       }
       button {
         background-color: #1877f2;

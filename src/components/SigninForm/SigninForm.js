@@ -37,7 +37,7 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         localStorage.setItem("token", res.data.token);
         setIsAuthenticated(true);
         setToken(res.data.token);
-        navigate("/homepage");
+        navigate("/timeline");
       }
     } catch (err) {
       if (err.response.status === 401) {
