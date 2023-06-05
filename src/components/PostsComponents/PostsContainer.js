@@ -48,30 +48,31 @@ export default function PostContainer() {
   }, []);
 
   function handleLike(id) {
-    if (liked) {
-      setLiked(false);
-    } else {
-      setLiked(true);
-    }
+
+
+      if (liked) {
+        setLiked(false)
+      } else {
+        setLiked(true)
+      }
+      
 
     axios
-      .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config)
-      .catch((err) => {
-        setIsLoading(false);
-        alert(
-          "An error occured while trying to fetch the posts, please refresh the page"
-        );
-        console.log(err.response.data);
-      });
-  }
+    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config)
+    .catch((err) => {
+      setIsLoading(false);
+      alert(
+        "An error occured while trying to fetch the posts, please refresh the page"
+      );
+      console.log(err.response.data);
+    });
 
-  function openModal() {
-    setOpenedModal(true);
-  }
-
-  function deletePost(id) {
-    setDelected(true);
-
+    function openModal() {
+      setOpenedModal(true);
+    }
+  
+    function deletePost(id) {
+      setDelected(true);
     setTimeout(() => {
       const urlDelete = `${process.env.REACT_APP_API_URL}/posts/${id}`;
       const config = {
@@ -403,3 +404,4 @@ const WhiteButton = styled.button`
   padding: 5px;
   width: 112px;
 `;
+}
