@@ -1,51 +1,52 @@
 import styled from "styled-components";
 import React from "react";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import axios from "axios"
+import { ThreeDots } from "react-loader-spinner";
+import axios from "axios";
+import { DebounceInput } from "react-debounce-input";
 
 export default function SearchPeople() {
   const searchRef = React.useRef();
   const [isOpenSearch, setIsOpenSearch] = React.useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = React.useState(false);
-  const [list, setList] = React.useState([])
+  const [list, setList] = React.useState([]);
   const [form, setForm] = React.useState({
-    "searchValue":""
+    searchValue: "",
   });
 
-    function getList(searchValue){
-      setIsLoadingSearch(true);
-      axios.post(`${process.env.REACT_APP_API_URL}/users/list`,form)
-      .then((res)=> {
-        setIsLoadingSearch(false)
-        console.log(res.data)
-      })
-      .catch((err)=>{
+  function getList(form) {
+    setIsLoadingSearch(true);
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/users/list`, form)
+      .then((res) => {
         setIsLoadingSearch(false);
-        alert(
-          "An error occured while trying to search users, please talk us"
-        );
-        console.log(err.response.data);
+        setList(res.data);
+        console.log(res.data);
       })
-    }
+      .catch((err) => {
+        setIsLoadingSearch(false);
+        alert("An error occured while trying to search users, please talk us");
+        console.log(err.response.data);
+      });
+  }
 
-  function handleSearch(e) {
-    if(e.target.value ==""){
-      setIsOpenSearch(false)
-    }else{
-      setIsOpenSearch(true)
-      getList(e.target.value)
+  async function handleSearch(e) {
+    if (e.target.value == "") {
+      setIsOpenSearch(false);
+    } else {
+      setIsOpenSearch(true);
+      getList({ ...form, searchValue: e.target.value });
     }
   }
-  
+
   return (
     <Search>
       <SearchInput>
-        <input
+        <DebounceInput
+          minLength={3}
+          debounceTimeout={300}
           placeholder="Search for people"
-          value={form.searchValue}
           type="text"
-          name="url"
           onChange={handleSearch}
         />
 
@@ -54,18 +55,22 @@ export default function SearchPeople() {
         </Icone>
       </SearchInput>
       <SearchBar style={{ display: isOpenSearch ? "initial" : "none" }}>
-        <Link to="/">
-          <img src="" alt="" />
-          <h1> João Avatares</h1>
-        </Link>
-        <Link to="/">
-          <img src="" alt="" />
-          <h1> João Avatares</h1>
-        </Link>
-        <Link to="/">
-          <img src="" alt="" />
-          <h1> João Avatares</h1>
-        </Link>
+        {isLoadingSearch ? (
+          <ContainerLoader>
+            <ThreeDots width={100} height={100} color="#FFFFFF" />
+          </ContainerLoader>
+        ) : (
+          <Container>
+            {list.map((result) => {
+              return (
+                <Link to={`/user/${result.id}`}>
+                  <img src={result.picture_url} alt="" />
+                  <h1>{result.username}</h1>
+                </Link>
+              );
+            })}
+          </Container>
+        )}
       </SearchBar>
     </Search>
   );
@@ -93,11 +98,20 @@ const Search = styled.span`
 `;
 
 const Icone = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+`;
+
+const ContainerLoader = styled.div`
+  margin-top: 30px;
+  height: 150px;
+`;
+
+const Container = styled.div`
+  background-color: aliceblue;
+`;
 
 const SearchInput = styled.div`
   display: flex;
@@ -147,7 +161,7 @@ const SearchBar = styled.span`
   width: 60vw;
   max-width: 563px;
   height: 300px;
-  a{
+  a {
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -156,12 +170,12 @@ const SearchBar = styled.span`
     background-color: #c6c6c6;
     margin-bottom: 8px;
   }
-  img{
+  img {
     width: 39px;
     height: 39px;
   }
-  h1{
-    font-family: 'Lato';
+  h1 {
+    font-family: "Lato";
     font-style: normal;
     font-weight: 400;
     font-size: 19px;
