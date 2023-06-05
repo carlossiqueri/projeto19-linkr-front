@@ -50,7 +50,7 @@ const ContainerLadder = styled.div`
   position: absolute;
   width: 301px;
   height: 406px;
-  left: 66%;
+  right: 1%;
   top: 319px;
 
   background: #171717;
