@@ -53,11 +53,7 @@ export default function PostContainer() {
     axios
     .post(`${urlLikePost}${id}`, {}, config)
     .then( () => {
-      if (liked) {
-        setLiked(false)
-      } else {
-        setLiked(true)
-      }
+      setLiked(!liked)
     })
     .catch((err) => {
       setIsLoading(false);
