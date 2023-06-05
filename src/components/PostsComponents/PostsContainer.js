@@ -47,10 +47,10 @@ export default function PostContainer() {
       } else {
         setLiked(true)
       }
-      
+      console.log(config)
 
     axios
-    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, {}, config)
+    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config)
     .catch((err) => {
       setIsLoading(false);
       alert(
@@ -76,7 +76,7 @@ export default function PostContainer() {
               <Post key={index}>
                 <ContainerLike>
                   <PostOwnerImg src={p.user_picture} />
-                  {liked ? (
+                  {p.liked_by ? (
                     <AiFillHeart onClick={() => handleLike(p.id)} />
                   ) : (
                     <AiOutlineHeart onClick={() => handleLike(p.id)} />
