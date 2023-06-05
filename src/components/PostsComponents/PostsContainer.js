@@ -3,11 +3,15 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const token = localStorage.getItem("token");
+  const [liked, setLiked] = useState(false)
+
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -15,7 +19,6 @@ export default function PostContainer() {
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -25,6 +28,32 @@ export default function PostContainer() {
         console.log(err.response.data);
       });
   }, []);
+
+  function handleLike(id) {
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }}
+
+      if (liked) {
+        setLiked(false)
+      } else {
+        setLiked(true)
+      }
+      
+
+    axios.post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config, token)
+    .catch((err) => {
+      setIsLoading(false);
+      alert(
+        "An error occured while trying to fetch the posts, please refresh the page"
+      );
+      console.log(err.response.data);
+    });
+
+  
+}
 
 
   return (
@@ -38,7 +67,15 @@ export default function PostContainer() {
           {post.map((p, index) => {
             return (
               <Post key={index}>
-                <PostOwnerImg src={p.user_picture} />
+                <ContainerLike>
+                  <PostOwnerImg src={p.user_picture} />
+                  {liked ? (
+                    <AiFillHeart onClick={() => handleLike(p.id)} />
+                  ) : (
+                    <AiOutlineHeart onClick={() => handleLike(p.id)} />
+                  )}
+                  <p>{p.likes} likes</p>
+                </ContainerLike>
                 <div>
                   <PostOwner>{p.username}</PostOwner>
                   <PostDescription>{p.description}</PostDescription>
@@ -160,3 +197,23 @@ const LinkImg = styled.img`
   height: 155px;
   border-radius: 0px 12px 13px 0px;
 `;
+
+const ContainerLike = styled.div`
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 20px;
+  color: #ffffff;
+
+  svg:hover{
+    cursor: pointer;
+  }
+
+  p{
+    font-size: 11px;
+    font-family: "Lato", sans-serif;
+    margin-top: 4px;
+  }
+
+`
