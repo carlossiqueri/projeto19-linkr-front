@@ -5,6 +5,7 @@ import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
 import Title from "../components/HomeComponents/Title.js";
 import PostContainer from "../components/PostsComponents/PostsContainer.js";
+import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
@@ -89,6 +90,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         </span>
       </FeedContainer>
       <PostContainer />
+      <HashtagsTrending />
     </HomepageContainer>
   );
 }
@@ -103,16 +105,13 @@ const HomepageContainer = styled.section`
 `;
 
 const FeedContainer = styled.div`
-  width: 50%;
   margin-top: 148px;
   display: flex;
   flex-direction: column;
 
-    
-.Title{
+  .Title {
     margin-left: 28px;
   }
-  
 
   p {
     font-family: "Oswald", sans-serif;
@@ -188,6 +187,9 @@ const FeedContainer = styled.div`
           font-weight: 300;
           line-height: 18px;
           color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+
+          span {
+          }
         }
       }
       button {

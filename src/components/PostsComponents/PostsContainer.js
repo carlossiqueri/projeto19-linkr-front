@@ -4,11 +4,15 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
   const [liked, setLiked] = useState(false)
 
@@ -78,7 +82,15 @@ export default function PostContainer() {
                 </ContainerLike>
                 <div>
                   <PostOwner>{p.username}</PostOwner>
-                  <PostDescription>{p.description}</PostDescription>
+                  <PostDescription>
+                    {p.description.split(" ").map((s, index) => {
+                      if(s.startsWith("#")){
+                        return <span key={index} onClick={() => navigate(`/hashtag/${s.replace("#", "")}`)}>{` ${s} `}</span>
+                      }else{
+                        return <>{` ${s} `}</>
+                      }
+                    })}
+                    </PostDescription>
                   <PostLink  onClick={() => window.open(`${p.url}`, "_blank")}>
                     <LinkInfo>
                       <h3>{p.url_title}</h3>
@@ -150,6 +162,14 @@ const PostDescription = styled.p`
   font-size: 17px;
   line-height: 20px;
   color: #b7b7b7;
+  span{
+    font-weight: bold;
+    color: #FFFFFF;
+    :hover{
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
 `;
 
 const PostLink = styled.div`
