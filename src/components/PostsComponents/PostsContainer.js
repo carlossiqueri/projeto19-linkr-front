@@ -5,21 +5,27 @@ import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { InfoContext } from "../../context/InfoContext";
 
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [liked, setLiked] = useState(false)
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-  const [liked, setLiked] = useState(false)
+  const { token } = useContext(InfoContext);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }}
 
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(urlTimeline)
+      .get(urlTimeline, config)
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
@@ -35,10 +41,6 @@ export default function PostContainer() {
 
   function handleLike(id) {
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }}
 
       if (liked) {
         setLiked(false)
@@ -47,7 +49,8 @@ export default function PostContainer() {
       }
       
 
-    axios.post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config, token)
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, {}, config)
     .catch((err) => {
       setIsLoading(false);
       alert(
