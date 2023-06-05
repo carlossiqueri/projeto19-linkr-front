@@ -159,6 +159,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         
         
       </StyledModal>
+      <PostContainer />
+      <HashtagsTrending />
 
         </HomepageContainer>
     )
