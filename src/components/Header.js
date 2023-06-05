@@ -46,15 +46,15 @@ export default function Header({ setIsAuthenticated, setSession }) {
 
       <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
-        <ion-icon name={typeIonIcon}></ion-icon> <img />
+        <ion-icon name={typeIonIcon}></ion-icon> <img data-test="avatar" />
       </span>
 
-      <div
+      <div data-test="menu"
         onClick={handleLogout}
         ref={menuRef}
         style={{ display: isOpenMenu ? "initial" : "none" }}
       >
-        <span>Logout</span>
+        <span data-test="logout">Logout</span>
       </div>
     </HeaderContainer>
   );

@@ -4,23 +4,30 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useContext } from "react";
 import { InfoContext } from "../../context/InfoContext";
-
+import { TbTrashFilled } from "react-icons/tb";
+import { AiFillEdit } from "react-icons/ai";
+import ReactModal from "react-modal";
+import { ColorRing } from "react-loader-spinner";
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [liked, setLiked] = useState(false)
+  const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
+  const [openedModal, setOpenedModal] = useState(false);
+  const [delected, setDelected] = useState(false);
+  const [postEdit, setPostEdit] = useState(false);
 
   const { token } = useContext(InfoContext);
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }}
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -29,6 +36,7 @@ export default function PostContainer() {
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -40,28 +48,60 @@ export default function PostContainer() {
   }, []);
 
   function handleLike(id) {
-
-
-      if (liked) {
-        setLiked(false)
-      } else {
-        setLiked(true)
-      }
-      
+    if (liked) {
+      setLiked(false);
+    } else {
+      setLiked(true);
+    }
 
     axios
-    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, {}, config)
-    .catch((err) => {
-      setIsLoading(false);
-      alert(
-        "An error occured while trying to fetch the posts, please refresh the page"
-      );
-      console.log(err.response.data);
-    });
+      .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config)
+      .catch((err) => {
+        setIsLoading(false);
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page"
+        );
+        console.log(err.response.data);
+      });
+  }
 
-  
-}
+  function openModal() {
+    setOpenedModal(true);
+  }
 
+  function deletePost(id) {
+    setDelected(true);
+
+    setTimeout(() => {
+      const urlDelete = `${process.env.REACT_APP_API_URL}/posts/${id}`;
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      const promise = axios.delete(urlDelete, config);
+      promise.then((res) => {
+        setDelected(false);
+        setOpenedModal(false);
+      });
+      promise.catch((err) => {
+        console.log(err.response.data.mensagem);
+        alert("Não foi possível excluir o post");
+        setOpenedModal(false);
+        setDelected(false);
+      });
+      promise.finally(() => {
+        setOpenedModal(false);
+      });
+    }, 3000);
+  }
+
+  // function clickEdit() {
+  //   setPostEdit(true);
+  // }
+
+  // function editPost() {
+  //   // const { id } = useParams();
+  // }
 
   return (
     <>
@@ -76,7 +116,7 @@ export default function PostContainer() {
               <Post key={index}>
                 <ContainerLike>
                   <PostOwnerImg src={p.user_picture} />
-                  {liked ? (
+                  {p.liked_by ? (
                     <AiFillHeart onClick={() => handleLike(p.id)} />
                   ) : (
                     <AiOutlineHeart onClick={() => handleLike(p.id)} />
@@ -84,21 +124,44 @@ export default function PostContainer() {
                   <p>{p.likes} likes</p>
                 </ContainerLike>
                 <div>
-                  <PostOwner>{p.username}</PostOwner>
+                  <PostOwner>
+                    {p.username}
+                    <div>
+                      <AiFillEdit 
+                      color="white" 
+                      size={15} 
+                      onClick={postEdit} />
+                      
+                      <TbTrashFilled
+                        color="white"
+                        size={15}
+                        onClick={openModal}
+                      />
+                    </div>
+                  </PostOwner>
                   <PostDescription>
                     {p.description.split(" ").map((s, index) => {
-                      if(s.startsWith("#")){
-                        return <span key={index} onClick={() => navigate(`/hashtag/${s.replace("#", "")}`)}>{` ${s} `}</span>
-                      }else{
-                        return <>{` ${s} `}</>
+                      if (s.startsWith("#")) {
+                        return (
+                          <span
+                            key={index}
+                            onClick={() =>
+                              navigate(`/hashtag/${s.replace("#", "")}`)
+                            }
+                          >{` ${s} `}</span>
+                        );
+                      } else {
+                        return <>{` ${s} `}</>;
                       }
                     })}
-                    </PostDescription>
-                  <PostLink  onClick={() => window.open(`${p.url}`, "_blank")}>
+                  </PostDescription>
+                  <PostLink onClick={() => window.open(`${p.url}`, "_blank")}>
                     <LinkInfo>
                       <h3>{p.url_title}</h3>
                       <p>{p.url_description}</p>
-                      <a href={p.url} target="_blank">{p.url}</a>
+                      <a href={p.url} target="_blank">
+                        {p.url}
+                      </a>
                     </LinkInfo>
                     <LinkImg src={p.url_picture} />
                   </PostLink>
@@ -106,6 +169,38 @@ export default function PostContainer() {
               </Post>
             );
           })}
+
+          <StyledModal isOpen={openedModal} style={customStyles}>
+            <p>
+              Are you sure you want <br /> to delete this post?
+            </p>
+
+            {delected ? (
+              <ColorRing
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={[
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                ]}
+              />
+            ) : (
+              <div>
+                <WhiteButton onClick={() => setOpenedModal(false)}>
+                  No, go back
+                </WhiteButton>
+                <BlueButton onClick={deletePost}>Yes, delete it</BlueButton>
+              </div>
+            )}
+          </StyledModal>
         </ContainerTimeline>
       )}
     </>
@@ -140,7 +235,6 @@ const Post = styled.div`
   background-color: #171717;
   border-radius: 16px;
   margin-bottom: 30px;
-
 `;
 const PostOwnerImg = styled.img`
   width: 50px;
@@ -157,6 +251,12 @@ const PostOwner = styled.p`
   color: #ffffff;
   margin-top: 20px;
   margin-bottom: 7px;
+
+  div {
+    width: 40px;
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 const PostDescription = styled.p`
@@ -165,10 +265,10 @@ const PostDescription = styled.p`
   font-size: 17px;
   line-height: 20px;
   color: #b7b7b7;
-  span{
+  span {
     font-weight: bold;
-    color: #FFFFFF;
-    :hover{
+    color: #ffffff;
+    :hover {
       text-decoration: underline;
       cursor: pointer;
     }
@@ -184,7 +284,7 @@ const PostLink = styled.div`
   margin-top: 10px;
   width: 500px;
   height: 155px;
-  :hover{
+  :hover {
     cursor: pointer;
   }
 `;
@@ -222,21 +322,84 @@ const LinkImg = styled.img`
 `;
 
 const ContainerLike = styled.div`
-
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 20px;
   color: #ffffff;
 
-  svg:hover{
+  svg:hover {
     cursor: pointer;
   }
 
-  p{
+  p {
     font-size: 11px;
     font-family: "Lato", sans-serif;
     margin-top: 4px;
   }
+`;
 
-`
+const customStyles = {
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "25%",
+    backgroundColor: "#333333",
+    margin: "auto",
+    borderRadius: "50px",
+    padding: "20px",
+
+    fontFamily: "Lato",
+    fontSize: "20px",
+    fontWeight: "700",
+    lineHeight: "25.8px",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  overlay: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    zIndex: "2",
+  },
+};
+
+const StyledModal = styled(ReactModal)`
+  ${customStyles.content}
+
+  div {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+`;
+
+const BlueButton = styled.button`
+  background-color: #1877f2;
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+  width: 112px;
+  margin-left: 20px;
+`;
+const WhiteButton = styled.button`
+  background-color: white;
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: #1877f2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+  width: 112px;
+`;

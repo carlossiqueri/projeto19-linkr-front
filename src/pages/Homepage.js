@@ -6,16 +6,13 @@ import { InfoContext } from "../context/InfoContext";
 import Title from "../components/HomeComponents/Title.js";
 import PostContainer from "../components/PostsComponents/PostsContainer.js";
 import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
-import Modal from "react-modal";
-import ReactModal from "react-modal";
-import { ColorRing } from "react-loader-spinner";
+
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token } = useContext(InfoContext);
-  const [openedModal, setOpenedModal] = useState(false);
-  const [delected, setDelected] = useState(false);
+  const { token, profileImage } = useContext(InfoContext);
+  
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,37 +47,6 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     }, 3000);
   }
 
-  function openModal() {
-    setOpenedModal(true);
-  }
-
-  function deletePost(id){
-    setDelected(true);
-
-    setTimeout(() => {
-      const urlDelete= `${process.env.REACT_APP_API_URL}`;
-    const config = {
-      headers:
-      {Authorization: `Bearer ${token}`}
-    }
-
-    const promise = axios.delete(urlDelete, config);
-    promise.then(res => {
-      setDelected(false);
-      setOpenedModal(false);
-    });
-    promise.catch((err) => {
-      console.log(err.response.data.mensagem);
-      setOpenedModal(false);
-      alert("Não foi possível excluir o post");
-    });
-    promise.finally(() => {
-      setOpenedModal(false);
-    })
-    
-    }, 3000);
-    
-  }
 
 
     return(
@@ -92,13 +58,13 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
 
         <Title />
 
-        <span>
-          <img />
+        <span data-test="publish-box">
+          <img src={profileImage} />
           <div>
             <p>What are you going to share today?</p>
 
             <form onSubmit={createPost}>
-              <input
+              <input data-test="link"
                 required
                 placeholder="http://..."
                 type="text"
@@ -108,7 +74,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
                 disabled={disabled}
               />
 
-              <textarea
+              <textarea data-test="description"
                 required
                 placeholder="Awesome article about #javascript"
                 type="text"
@@ -119,46 +85,16 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
               />
 
               {disabled ? (
-                <button disabled={disabled}> Publishing... </button>
+                <button data-test="publish-btn" disabled={disabled}> Publishing... </button>
               ) : (
-                <button> Publish </button>
+                <button data-test="publish-btn"> Publish </button>
               )}
             </form>
-            <button onClick={openModal}>Teste</button>
-
-
-
                     </div>
                 </span>
             </FeedContainer>
 
-            <StyledModal isOpen={openedModal} style={customStyles}>
-        <p>
-          Are you sure you want <br /> to delete this post?
-        </p>
-
-
-          {delected ? (
-           <ColorRing
-           visible={true}
-           height="80"
-           width="80"
-           ariaLabel="blocks-loading"
-           wrapperStyle={{}}
-           wrapperClass="blocks-wrapper"
-           colors={["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF" ]}
-         />
-            
-          ) : (
-            <div>
-            <WhiteButton onClick={() => setOpenedModal(false)}>No, go back</WhiteButton>
-            <BlueButton onClick={deletePost}>Yes, delete it</BlueButton>
-            </div>
-          )}
-        
-        
-        
-      </StyledModal>
+           
       <PostContainer />
       <HashtagsTrending />
 
@@ -279,69 +215,3 @@ const FeedContainer = styled.div`
   }
 `;
 
-const customStyles = {
-  
-  content: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "25%",
-    backgroundColor: "#333333",
-    margin: "auto",
-    borderRadius: "50px",
-    padding: "20px",
-
-    fontFamily: "Lato",
-    fontSize: "20px", 
-    fontWeight: "700",
-    lineHeight: "25.8px",
-    color: "#FFFFFF",
-    textAlign: "center"
-  },
-  overlay: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    zIndex: "2"
-  },
-};
-
-const StyledModal = styled(ReactModal)`
-  ${customStyles.content}
-
-  div{
-    margin-top: 30px;
-    margin-bottom: 20px;
-  }
-`;
-
-const BlueButton = styled.button`
-background-color: #1877F2;
-font-family: "Lato", sans-serif;
-font-weight: 700;
-font-size: 14px;
-line-height: 16.8px;
-color: #ffffff;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-padding: 5px;
-width: 112px;
-margin-left: 20px;
-`
-const WhiteButton = styled.button`
-background-color: white;
-font-family: "Lato", sans-serif;
-font-weight: 700;
-font-size: 14px;
-line-height: 16.8px;
-color: #1877F2;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-padding: 5px;
-width: 112px;
-
-`
