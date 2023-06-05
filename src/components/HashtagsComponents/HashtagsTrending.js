@@ -29,12 +29,12 @@ export function HashtagsTrending() {
       {isLoading ? (
         ""
       ) : (
-        <ContainerLadder>
+        <ContainerLadder  data-test="trending">
           <LadderTittle>trending</LadderTittle>
           <div></div>
-          <LadderList>
+          <LadderList >
             {ladder.map((l, index) => {
-              return <li key={index} onClick={() => navigate(`/hashtag/${l.hashtag_name.replace("#", "")}`)}>{l.hashtag_name}</li>;
+              return <li data-test="hashtag" key={index} onClick={() => navigate(`/hashtag/${l.hashtag_name.replace("#", "")}`)}>{l.hashtag_name}</li>;
             })}
           </LadderList>
         </ContainerLadder>
