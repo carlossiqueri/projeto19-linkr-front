@@ -19,7 +19,6 @@ export default function PostContainer() {
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -48,7 +47,7 @@ export default function PostContainer() {
                   <PostDescription>
                     {p.description.split(" ").map((s, index) => {
                       if(s.startsWith("#")){
-                        return <span key={index} onClick={() => navigate(`/hashtag/:${s}`)}>{` ${s} `}</span>
+                        return <span key={index} onClick={() => navigate(`/hashtag/${s.replace("#", "")}`)}>{` ${s} `}</span>
                       }else{
                         return <>{` ${s} `}</>
                       }
