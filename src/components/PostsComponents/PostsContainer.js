@@ -14,6 +14,7 @@ import { ColorRing } from "react-loader-spinner";
 
 export default function PostContainer() {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
+  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`
   const [post, setPost] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -45,20 +46,19 @@ export default function PostContainer() {
         );
         console.log(err.response.data);
       });
-  }, []);
+  }, [liked]);
 
-  function handleLike(id) {
+  function handleLike(id) {    
 
-
+    axios
+    .post(`${urlLikePost}${id}`, {}, config)
+    .then( () => {
       if (liked) {
         setLiked(false)
       } else {
         setLiked(true)
       }
-      
-
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/posts/like/${id}`, config)
+    })
     .catch((err) => {
       setIsLoading(false);
       alert(
@@ -122,7 +122,7 @@ export default function PostContainer() {
                   ) : (
                     <AiOutlineHeart onClick={() => handleLike(p.id)} />
                   )}
-                  <p>{p.likes} likes</p>
+                  <p>{p.like_count} likes</p>
                 </ContainerLike>
                 <div>
                   <PostOwner>
