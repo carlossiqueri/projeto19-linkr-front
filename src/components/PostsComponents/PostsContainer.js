@@ -42,19 +42,14 @@ export default function PostContainer() {
         );
         console.log(err.response.data);
       });
-  }, []);
+  }, [liked]);
 
   function handleLike(id) {    
     axios
     .post(`${urlLikePost}${id}`, {}, config)
     .then( () => {
-      if (liked) {
-        setLiked(false)
-      } else {
-        setLiked(true)
-      }})
-
-
+      setLiked(!liked)
+    })
     .catch((err) => {
       setIsLoading(false);
       alert(
@@ -64,28 +59,30 @@ export default function PostContainer() {
     });
   }
 
-  function getPost(){
-    setIsLoading(true);
-    axios
-      .get(urlTimeline, config)
-      .then((res) => {
-        setIsLoading(false);
-        setPost(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        alert(
-          "An error occured while trying to fetch the posts, please refresh the page"
-        );
-        console.log(err.response.data);
-      });
-  }
+
+    function getPost(){
+      setIsLoading(true);
+      axios
+        .get(urlTimeline, config)
+        .then((res) => {
+          setIsLoading(false);
+          setPost(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
+          console.log(err.response.data);
+        });
+    }
 
     function openModal(id) {
       setOpenedModal(true);
       setPostId(id);
     }
+
   
     function deletePost() {
       setDelected(true);
