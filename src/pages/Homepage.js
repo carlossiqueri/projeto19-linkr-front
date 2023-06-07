@@ -56,8 +56,6 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
 
-        <Title />
-
         <span data-test="publish-box">
           <img src={profileImage} />
           <div>
@@ -92,7 +90,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
             </form>
                     </div>
                 </span>
-            </FeedContainer>
+      </FeedContainer>
 
            
       <PostContainer />

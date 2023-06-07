@@ -5,7 +5,7 @@ import { InfoContext } from "../../context/InfoContext";
 
 const SigninForm = ({ setSession, setIsAuthenticated }) => {
   const navigate = useNavigate();
-  const {setToken} = useContext(InfoContext);
+  const { setToken, setCurrentUserId} = useContext(InfoContext);
   const [activeButton, setActiveButton] = React.useState(true);
   const [form, setForm] = React.useState({
     email: "",
@@ -37,6 +37,7 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         localStorage.setItem("token", res.data.token);
         setIsAuthenticated(true);
         setToken(res.data.token);
+        setCurrentUserId(res.data.userId);
         navigate("/timeline");
       }
     } catch (err) {
