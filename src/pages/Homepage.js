@@ -3,16 +3,13 @@ import Header from "../components/Header";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
-import Title from "../components/HomeComponents/Title.js";
 import PostContainer from "../components/PostsComponents/PostsContainer.js";
 import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
-
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
   const { token, profileImage } = useContext(InfoContext);
-  
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,11 +44,9 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     }, 3000);
   }
 
-
-
-    return(
-        <HomepageContainer>
-            <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
+  return (
+    <HomepageContainer>
+      <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
@@ -62,7 +57,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
             <p>What are you going to share today?</p>
 
             <form onSubmit={createPost}>
-              <input data-test="link"
+              <input
+                data-test="link"
                 required
                 placeholder="http://..."
                 type="text"
@@ -72,7 +68,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
                 disabled={disabled}
               />
 
-              <textarea data-test="description"
+              <textarea
+                data-test="description"
                 required
                 placeholder="Awesome article about #javascript"
                 type="text"
@@ -83,21 +80,22 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
               />
 
               {disabled ? (
-                <button data-test="publish-btn" disabled={disabled}> Publishing... </button>
+                <button data-test="publish-btn" disabled={disabled}>
+                  {" "}
+                  Publishing...{" "}
+                </button>
               ) : (
                 <button data-test="publish-btn"> Publish </button>
               )}
             </form>
-                    </div>
-                </span>
+          </div>
+        </span>
       </FeedContainer>
 
-           
       <PostContainer />
       <HashtagsTrending />
-
-        </HomepageContainer>
-    )
+    </HomepageContainer>
+  );
 }
 
 const HomepageContainer = styled.section`
@@ -187,12 +185,12 @@ const FeedContainer = styled.div`
           resize: none;
           width: 100%;
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: ${({disabled}) => disabled ? "#949494" : "#000000"};
-    }
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+        }
       }
       button {
         background-color: #1877f2;
@@ -212,4 +210,3 @@ const FeedContainer = styled.div`
     }
   }
 `;
-

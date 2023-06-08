@@ -1,15 +1,19 @@
 import styled from "styled-components";
-import React from "react";
-import { Link } from "react-router-dom";
+import React from "react"
+import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import axios from "axios";
 import { DebounceInput } from "react-debounce-input";
+import { useContext } from "react";
+import { InfoContext } from "../../context/InfoContext";
 
 export default function SearchPeople() {
+  const navigate = useNavigate();
   const searchRef = React.useRef();
   const [isOpenSearch, setIsOpenSearch] = React.useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = React.useState(false);
   const [list, setList] = React.useState([]);
+  const {userId, setUserId } = useContext(InfoContext)
   const [form, setForm] = React.useState({
     searchValue: "",
   });
@@ -21,7 +25,6 @@ export default function SearchPeople() {
       .then((res) => {
         setIsLoadingSearch(false);
         setList(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         setIsLoadingSearch(false);
@@ -29,7 +32,6 @@ export default function SearchPeople() {
         console.log(err.response.data);
       });
   }
-
   async function handleSearch(e) {
     if (e.target.value == "") {
       setIsOpenSearch(false);
@@ -63,10 +65,15 @@ export default function SearchPeople() {
           <Container>
             {list.map((result) => {
               return (
-                <Link to={`/user/${result.id}`}>
+                <a key={result.id} onClick={()=>
+                  { 
+                  console.log(result.id)
+                  setUserId(result.id)
+                  navigate("/user")
+                  }}>
                   <img src={result.picture_url} alt="" />
                   <h1>{result.username}</h1>
-                </Link>
+                </a>
               );
             })}
           </Container>

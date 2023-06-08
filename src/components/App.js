@@ -3,6 +3,7 @@ import SignupPage from "./SignupPage/SignupPage";
 import SigninPage from "./SigninPage/SigninPage";
 import React from "react";
 import Homepage from "../pages/Homepage";
+import UserPage from "../pages/UserPage.js";
 import { InfoProvider } from "../context/InfoContext";
 
 function App() {
@@ -36,6 +37,15 @@ function App() {
           path="/timeline"
           element={
             <Homepage
+              setIsAuthenticated={setIsAuthenticated}
+              setSession={setSession}
+            />
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <UserPage
               setIsAuthenticated={setIsAuthenticated}
               setSession={setSession}
             />
