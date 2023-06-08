@@ -4,6 +4,9 @@ import { TbTrashFilled } from "react-icons/tb";
 import { AiFillEdit } from "react-icons/ai";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { InfoContext } from "../../context/InfoContext";
+import { useContext } from "react";
 
 export default function Post({
   p,
@@ -13,6 +16,12 @@ export default function Post({
   handleLike,
 }) {
   const [edited, setEdited] = useState(false);
+  const { userId, setUserId } = useContext(InfoContext);
+
+  function clickOnUsername() {
+    console.log("aqui na função");
+  }
+
   return (
     <Wrapper key={index}>
       <ContainerLike>
@@ -26,7 +35,11 @@ export default function Post({
       </ContainerLike>
       <div>
         <PostOwner>
-          {p.username}
+          {
+            <Link onClick={() => setUserId(`${p.user_id}`)} to={`/user`}>
+              {p.username}
+            </Link>
+          }
           <div>
             {isCurrentUserPost && (
               <>
@@ -89,11 +102,25 @@ const PostOwner = styled.p`
   font-size: 19px;
   line-height: 23px;
   color: #ffffff;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 7px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: start;
+  justify-content: start;
+
+  a {
+    text-decoration: none;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 23px;
+    color: #ffffff;
+    margin-top: 20px;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   div {
     width: 40px;
