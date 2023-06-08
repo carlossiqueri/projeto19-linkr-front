@@ -13,7 +13,6 @@ export default function Post({
   handleLike,
 }) {
   const [edited, setEdited] = useState(false);
-
   return (
     <Wrapper key={index}>
       <ContainerLike>
