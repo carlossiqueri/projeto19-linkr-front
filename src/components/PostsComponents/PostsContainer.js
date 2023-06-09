@@ -12,8 +12,10 @@ import useInterval from "use-interval";
 import { TfiReload } from "react-icons/tfi";
 import { useRef } from "react";
 
-export default function PostContainer() {
-  const [post, setPost] = useState([]);
+export default function PostContainer({ post, setPost }) {
+  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
+  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
+  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
   const [initialPosts, setInitialPosts] = useState(null);
   const [count, setCount] = useState(null);
   const [update, setUpdate] = useState(null);
@@ -179,7 +181,6 @@ export default function PostContainer() {
           ) : null}
           {post.map((p, index) => {
             const isCurrentUserPost = p.user_id === currentUserId;
-
             return (
               <Post
                 handleLike={handleLike}
@@ -187,6 +188,7 @@ export default function PostContainer() {
                 isCurrentUserPost={isCurrentUserPost}
                 openModal={openModal}
                 p={p}
+                config={config}
               />
             );
           })}
