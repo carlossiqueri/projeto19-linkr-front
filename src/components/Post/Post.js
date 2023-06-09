@@ -2,9 +2,11 @@ import styled from "styled-components";
 import PostDescription from "../PostDescription/PostDescription";
 import { TbTrashFilled } from "react-icons/tb";
 import { AiFillEdit } from "react-icons/ai";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { BiRepost } from "react-icons/bi";
+import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { useState } from "react";
+import Comments from "../Comments/Comments";
+import { useEffect } from "react";
+import { BiRepost } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { InfoContext } from "../../context/InfoContext";
 import { useContext } from "react";
@@ -19,6 +21,7 @@ export default function Post({
   openModal,
   index,
   handleLike,
+  config,
 }) {
 
   const [edited, setEdited] = useState(false);
@@ -57,71 +60,87 @@ export default function Post({
     console.log("aqui na função");
   }
 
-  return (
-    <Wrapper key={index}>
-      <PostReposts />
-      <ContainerLike>
-        <PostOwnerImg src={p.user_picture} />
-        {p.liked_by ? (
-          <AiFillHeart onClick={() => handleLike(p.id)} />
-        ) : (
-          <AiOutlineHeart onClick={() => handleLike(p.id)} />
-        )}
-        <p>{p.like_count} likes</p>
+  const [openComment, setOpenComment] = useState(false);
+  const [comments, setComments] = useState([]);
+  const urlComment = `${process.env.REACT_APP_API_URL}/comments`;
 
-        <BiRepost
+  useEffect(() => {
+    const res = axios.get(`${urlComment}/${p.id}`, config);
+
+    res.then((res) => {
+      setComments(res.data);
+    });
+  }, []);
+
+  return (
+    <WrapperContainer>
+      <Wrapper key={index}>
+        <InteractionsPostContainer>
+          <PostOwnerImg src={p.user_picture} />
+          {p.liked_by ? (
+            <AiFillHeart onClick={() => handleLike(p.id)} />
+          ) : (
+            <AiOutlineHeart onClick={() => handleLike(p.id)} />
+          )}
+          <p>{p.like_count} likes</p>
+
+          <AiOutlineComment
+            onClick={() => setOpenComment((prevState) => !prevState)}
+          />
+          <p>{comments.length} comments</p>
+
+          <BiRepost
         size={25}
         onClick={() => setOpenedModal(true)}
          />
          <p> re-post</p>
-
-      </ContainerLike>
-      <div>
-        <PostOwner>
-          {
+        </InteractionsPostContainer>
+        <div>
+          <PostOwner>
+            {
             <Link onClick={() => setUserId(`${p.user_id}`)} to={`/user`}>
               {p.username}
             </Link>
-          }
-          <div>
-            {isCurrentUserPost && (
-              <>
-                <AiFillEdit
-                  color="white"
-                  size={15}
-                  onClick={() => setEdited(true)}
-                />
+            }
+            <div>
+              {isCurrentUserPost && (
+                <>
+                  <AiFillEdit
+                    color="white"
+                    size={15}
+                    onClick={() => setEdited(true)}
+                  />
 
-                <TbTrashFilled
-                  color="white"
-                  size={15}
-                  onClick={() => openModal(p.id)}
-                />
-              </>
-            )}
-          </div>
-        </PostOwner>
+                  <TbTrashFilled
+                    color="white"
+                    size={15}
+                    onClick={() => openModal(p.id)}
+                  />
+                </>
+              )}
+            </div>
+          </PostOwner>
 
-        <PostDescription
-          id={p.id}
-          edited={edited}
-          setEdited={setEdited}
-          description={p.description}
-        />
+          <PostDescription
+            id={p.id}
+            edited={edited}
+            setEdited={setEdited}
+            description={p.description}
+          />
 
-        <PostLink onClick={() => window.open(`${p.url}`, "_blank")}>
-          <LinkInfo>
-            <h3>{p.url_title}</h3>
-            <p>{p.url_description}</p>
-            <a href={p.url} target="_blank">
-              {p.url}
-            </a>
-          </LinkInfo>
-          <LinkImg src={p.url_picture} />
-        </PostLink>
-      </div>
+          <PostLink onClick={() => window.open(`${p.url}`, "_blank")}>
+            <LinkInfo>
+              <h3>{p.url_title}</h3>
+              <p>{p.url_description}</p>
+              <a href={p.url} target="_blank" rel="noreferrer">
+                {p.url}
+              </a>
+            </LinkInfo>
+            <LinkImg src={p.url_picture} />
+          </PostLink>
+        </div>
 
-      <StyledModal appElement={document.getElementById('root')} isOpen={openedModal} style={customStyles}>
+        <StyledModal appElement={document.getElementById('root')} isOpen={openedModal} style={customStyles}>
             <p>
               Do you want to re-post <br /> this link?
             </p>
@@ -152,29 +171,47 @@ export default function Post({
               </div>
             )}
           </StyledModal>
-
-    </Wrapper>
-    
+      </Wrapper>
+      {openComment ? (
+        <Comments
+          postInfo={p}
+          comments={comments}
+          setComments={setComments}
+          config={config}
+        >
+          <PostOwnerImg />
+        </Comments>
+      ) : null}
+    </WrapperContainer>
   );
 }
 
 const Wrapper = styled.div`
-  display: flex;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: 1fr 8fr;
   padding-bottom: 20px;
   width: 611px;
   background-color: #171717;
+  padding: 20px;
   border-radius: 16px;
-  margin-bottom: 30px;
+  box-sizing: border-box;
 `;
 
+const WrapperContainer = styled.div`
+  margin-bottom: 30px;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+`;
 
 const PostOwnerImg = styled.img`
   width: 50px;
   height: 50px;
   background-color: purple;
   border-radius: 26.5px;
-  margin: 16px;
+  margin-bottom: 15px;
 `;
+
 const PostOwner = styled.p`
   font-family: "Lato", sans-serif;
   font-weight: 400;
@@ -215,7 +252,6 @@ const PostLink = styled.div`
   border: 1px solid #4d4d4d;
   border-radius: 11px;
   margin-top: 10px;
-  width: 500px;
   height: 155px;
   :hover {
     cursor: pointer;
@@ -255,7 +291,7 @@ const LinkImg = styled.img`
   border-radius: 0px 12px 13px 0px;
 `;
 
-const ContainerLike = styled.div`
+const InteractionsPostContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -272,7 +308,7 @@ const ContainerLike = styled.div`
     font-weight: 400;
     line-height: 13.2px;
     margin-top: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
   }
 `;
 

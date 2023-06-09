@@ -9,41 +9,42 @@ import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrend
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token, profileImage, setRefresh } = useContext(InfoContext);
-
+  const { token, userInfo } = useContext(InfoContext);
+  const [post, setPost] = useState([]);
+  const [refresh] = useState(false);
+  const { profileImage, setRefresh } = useContext(InfoContext);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function createPost(e) {
+  async function createPost(e) {
     e.preventDefault();
 
     setDisabled(true);
 
-    setTimeout(() => {
-      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
-      const body = { url: form.url, description: form.description };
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const promise = axios.post(urlPost, body, config);
-      promise.then((res) => {
-        console.log("Deu certo!!!");
-        setForm({ url: "", description: "" });
-      });
-      promise.catch((err) => {
-        console.log(err.response.data);
-        alert("Houve um erro ao publicar seu link");
-        setDisabled(false);
-      });
-      promise.finally(() => {
-        setDisabled(false);
-        setRefresh(true);
-      });
-    }, 3000);
+    const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
+    const body = { url: form.url, description: form.description };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.post(urlPost, body, config);
+    promise.then((res) => {
+      console.log("Deu certo!!!");
+      setForm({ url: "", description: "" });
+      setRefresh(!refresh);
+    });
+    promise.catch((err) => {
+      console.log(err.response.data);
+      alert("Houve um erro ao publicar seu link");
+      setDisabled(false);
+    });
+    promise.finally(() => {
+      setDisabled(false);
+      setRefresh(true);
+    });
   }
 
   return (
@@ -54,7 +55,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         <p>timeline</p>
 
         <span data-test="publish-box">
-          <img src={profileImage} />
+          <img src={userInfo.picture_url} alt="" />
           <div>
             <p>What are you going to share today?</p>
 
@@ -93,8 +94,9 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
           </div>
         </span>
       </FeedContainer>
-      
-      <PostContainer />
+
+      <PostContainer post={post} setPost={setPost} refresh={refresh} />
+
       <HashtagsTrending />
     </HomepageContainer>
   );
