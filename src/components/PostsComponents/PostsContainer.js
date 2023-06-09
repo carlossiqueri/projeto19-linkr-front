@@ -10,20 +10,23 @@ import { ColorRing } from "react-loader-spinner";
 import Post from "../Post/Post";
 import useInterval from "use-interval";
 import { TfiReload } from "react-icons/tfi";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { useRef } from "react";
 
 export default function PostContainer({ post, setPost }) {
-  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
-  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
-  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
   const [initialPosts, setInitialPosts] = useState(null);
   const [count, setCount] = useState(null);
   const [update, setUpdate] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [liked, setLiked] = useState(false);
   const [openedModal, setOpenedModal] = useState(false);
   const [delected, setDelected] = useState(false);
   const [postId, setPostId] = useState(null);
+  const liInfiniteScrollRef = useRef(null);
+
+  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts?page=${currentPage}`;
+  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
+  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
 
   const { token, currentUserId, setProfileImage, setRefresh, refresh } =
     useContext(InfoContext);
@@ -33,14 +36,13 @@ export default function PostContainer({ post, setPost }) {
     },
   };
 
-  const getTwentyPosts = () => {
+  const getTenPosts = () => {
     axios
       .get(urlTimeline, config)
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
         setProfileImage(res.data.user_picture);
-        console.log(res.data);
         setRefresh(false);
       })
       .catch((err) => {
@@ -51,6 +53,7 @@ export default function PostContainer({ post, setPost }) {
         console.log(err.response.data);
       });
   };
+
 
   const getNumberOfAllPosts = () => {
     axios
@@ -66,10 +69,23 @@ export default function PostContainer({ post, setPost }) {
 
   useEffect(() => {
     setIsLoading(true);
-    getTwentyPosts();
+    getTenPosts();
     getNumberOfAllPosts();
-  }, [refresh]);
+    liInfiniteScrollRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [refresh, currentPage]);
 
+
+  useEffect(() => {
+    const intersectionObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        setCurrentPage((currentValue) => currentValue + 1);
+      }
+    })
+    if(liInfiniteScrollRef.current){
+      intersectionObserver.observe(liInfiniteScrollRef.current);
+    }
+    return () => intersectionObserver.disconnect();
+  }, [liInfiniteScrollRef]);
   //START: Utilização do hook useInterval para barra de update posts
 
   useInterval(() => {
@@ -208,8 +224,10 @@ export default function PostContainer({ post, setPost }) {
               </div>
             )}
           </StyledModal>
+          
         </ContainerTimeline>
       )}
+      <li ref={liInfiniteScrollRef} />
     </>
   );
 }
@@ -224,15 +242,8 @@ const ContainerTimeline = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 30px;
-  /* configs necessarias p mostras os posts se decidirmos mudar a maneira como a hnomepage está organizada*/
-  overflow-y: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  ::-webkit-scrollbar {
-    display: none;
-  }
+ 
 `;
 
 const customStyles = {
@@ -324,3 +335,4 @@ const UpdatePosts = styled.div`
     background: #0456bf;
   }
 `;
+
