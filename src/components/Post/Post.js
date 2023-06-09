@@ -7,7 +7,6 @@ import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { InfoContext } from "../../context/InfoContext";
-import { useContext } from "react";
 import { ColorRing } from "react-loader-spinner";
 import ReactModal from "react-modal";
 import PostReposts from "../RepostsComponents/PostReposts";
@@ -25,14 +24,12 @@ export default function Post({
 
   const [edited, setEdited] = useState(false);
 
-  const { userId, setUserId } = useContext(InfoContext);
+  const { userId, setUserId, token } = useContext(InfoContext);
 
 
   const [share, setShare] = useState(false);
   const [repostCount, setRepostCount] = useState(0);
   const [openedModal, setOpenedModal] = useState(false);
-
-  const { token } = useContext(InfoContext);
 
   function sharePost(id){
     setShare(true);
