@@ -3,66 +3,66 @@ import Header from "../components/Header";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { InfoContext } from "../context/InfoContext";
-import Title from "../components/HomeComponents/Title.js";
 import PostContainer from "../components/PostsComponents/PostsContainer.js";
 import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
-
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token, profileImage } = useContext(InfoContext);
-  
+  const { token, userInfo } = useContext(InfoContext);
+  const [post, setPost] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function createPost(e) {
+  async function createPost(e) {
     e.preventDefault();
 
     setDisabled(true);
 
-    setTimeout(() => {
-      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
-      const body = { url: form.url, description: form.description };
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const promise = axios.post(urlPost, body, config);
-      promise.then((res) => {
-        console.log("Deu certo!!!");
-        setForm({ url: "", description: "" });
-      });
-      promise.catch((err) => {
-        console.log(err.response.data);
-        alert("Houve um erro ao publicar seu link");
-        setDisabled(false);
-      });
-      promise.finally(() => {
-        setDisabled(false);
-      });
-    }, 3000);
+    const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
+    const body = { url: form.url, description: form.description };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.post(urlPost, body, config);
+    promise.then((res) => {
+      console.log("Deu certo!!!");
+      setForm({ url: "", description: "" });
+      setRefresh(!refresh);
+    });
+    promise.catch((err) => {
+      console.log(err.response.data);
+      alert("Houve um erro ao publicar seu link");
+      setDisabled(false);
+    });
+    promise.finally(() => {
+      setDisabled(false);
+    });
+
+    console.log("posts ao criar um post:", post);
+    console.log("post criado");
   }
 
-
-
-    return(
-        <HomepageContainer>
-            <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
+  return (
+    <HomepageContainer>
+      <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
       <FeedContainer disabled={disabled}>
         <p>timeline</p>
 
         <span data-test="publish-box">
-          <img src={profileImage} />
+          <img src={userInfo.picture_url} alt="" />
           <div>
             <p>What are you going to share today?</p>
 
             <form onSubmit={createPost}>
-              <input data-test="link"
+              <input
+                data-test="link"
                 required
                 placeholder="http://..."
                 type="text"
@@ -72,7 +72,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
                 disabled={disabled}
               />
 
-              <textarea data-test="description"
+              <textarea
+                data-test="description"
                 required
                 placeholder="Awesome article about #javascript"
                 type="text"
@@ -83,21 +84,22 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
               />
 
               {disabled ? (
-                <button data-test="publish-btn" disabled={disabled}> Publishing... </button>
+                <button data-test="publish-btn" disabled={disabled}>
+                  {" "}
+                  Publishing...{" "}
+                </button>
               ) : (
                 <button data-test="publish-btn"> Publish </button>
               )}
             </form>
-                    </div>
-                </span>
+          </div>
+        </span>
       </FeedContainer>
 
-           
-      <PostContainer />
+      <PostContainer post={post} setPost={setPost} refresh={refresh} />
       <HashtagsTrending />
-
-        </HomepageContainer>
-    )
+    </HomepageContainer>
+  );
 }
 
 const HomepageContainer = styled.section`
@@ -187,12 +189,12 @@ const FeedContainer = styled.div`
           resize: none;
           width: 100%;
 
-        font-family: 'Lato', sans-serif;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 18px;
-        color: ${({disabled}) => disabled ? "#949494" : "#000000"};
-    }
+          font-family: "Lato", sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 18px;
+          color: ${({ disabled }) => (disabled ? "#949494" : "#000000")};
+        }
       }
       button {
         background-color: #1877f2;
@@ -212,4 +214,3 @@ const FeedContainer = styled.div`
     }
   }
 `;
-

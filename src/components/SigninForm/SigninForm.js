@@ -5,7 +5,7 @@ import { InfoContext } from "../../context/InfoContext";
 
 const SigninForm = ({ setSession, setIsAuthenticated }) => {
   const navigate = useNavigate();
-  const { setToken, setCurrentUserId} = useContext(InfoContext);
+  const { setToken, setCurrentUserId, setUserInfo } = useContext(InfoContext);
   const [activeButton, setActiveButton] = React.useState(true);
   const [form, setForm] = React.useState({
     email: "",
@@ -19,6 +19,8 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
     });
   }
 
+  const serverUrl = process.env.REACT_APP_API_URL;
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!form.email || !form.password) {
@@ -26,8 +28,6 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
     }
 
     try {
-      const serverUrl = process.env.REACT_APP_API_URL;
-
       setActiveButton((prevState) => !prevState);
       const res = await axios.post(`${serverUrl}`, form);
       setActiveButton((prevState) => !prevState);
@@ -35,9 +35,15 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
       if (res.status === 200) {
         setSession(res.data.token);
         localStorage.setItem("token", res.data.token);
+        localStorage.setItem("userId", res.data.userId);
         setIsAuthenticated(true);
+        console.log(res.data);
         setToken(res.data.token);
         setCurrentUserId(res.data.userId);
+        const resUser = await axios.get(`${serverUrl}/user/${res.data.userId}`);
+        setUserInfo(resUser.data[0]);
+        console.log(`${serverUrl}/user/${res.data.userId}`);
+        console.log(resUser.data[0]);
         navigate("/timeline");
       }
     } catch (err) {

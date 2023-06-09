@@ -9,10 +9,9 @@ import ReactModal from "react-modal";
 import { ColorRing } from "react-loader-spinner";
 import Post from "../Post/Post";
 
-export default function PostContainer() {
+export default function PostContainer({ post, setPost, refresh }) {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
-  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`
-  const [post, setPost] = useState([]);
+  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
   const [isLoading, setIsLoading] = useState(false);
   const [liked, setLiked] = useState(false);
   const [openedModal, setOpenedModal] = useState(false);
@@ -33,7 +32,6 @@ export default function PostContainer() {
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -42,56 +40,35 @@ export default function PostContainer() {
         );
         console.log(err.response.data);
       });
-  }, [liked]);
+  }, [refresh]);
 
-  function handleLike(id) {    
+  function handleLike(id) {
     axios
-    .post(`${urlLikePost}${id}`, {}, config)
-    .then( () => {
-      setLiked(!liked)
-    })
-    .catch((err) => {
-      setIsLoading(false);
-      alert(
-        "An error occured while trying to fetch the posts, please refresh the page"
-      );
-      console.log(err.response.data);
-    });
+      .post(`${urlLikePost}${id}`, {}, config)
+      .then(() => {
+        setLiked(!liked);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page"
+        );
+        console.log(err.response.data);
+      });
   }
 
+  function openModal(id) {
+    setOpenedModal(true);
+    setPostId(id);
+  }
 
-    function getPost(){
-      setIsLoading(true);
-      axios
-        .get(urlTimeline, config)
-        .then((res) => {
-          setIsLoading(false);
-          setPost(res.data);
-          console.log(res.data);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          alert(
-            "An error occured while trying to fetch the posts, please refresh the page"
-          );
-          console.log(err.response.data);
-        });
-    }
-
-    function openModal(id) {
-      setOpenedModal(true);
-      setPostId(id);
-    }
-
-  
-    function deletePost() {
-      setDelected(true);
+  function deletePost() {
+    setDelected(true);
     setTimeout(() => {
       const urlDelete = `${process.env.REACT_APP_API_URL}/posts/${postId}`;
       const config = {
         headers: { Authorization: `Bearer ${token}` },
       };
-
 
       const promise = axios.delete(urlDelete, config);
       console.log(urlDelete);
@@ -99,8 +76,6 @@ export default function PostContainer() {
         setDelected(false);
         setOpenedModal(false);
         console.log("finalmente!!!!");
-        getPost();
-
       });
       promise.catch((err) => {
         console.log(err.response.data.mensagem);
@@ -114,7 +89,6 @@ export default function PostContainer() {
     }, 1500);
   }
 
-
   return (
     <>
       {isLoading ? (
@@ -124,20 +98,24 @@ export default function PostContainer() {
       ) : (
         <ContainerTimeline>
           {post.map((p, index) => {
-            const isCurrentUserPost = p.user_id  === currentUserId;
-            
+            const isCurrentUserPost = p.user_id === currentUserId;
             return (
-             <Post 
-             handleLike={handleLike} 
-             index={index} 
-             isCurrentUserPost={isCurrentUserPost} 
-             openModal={openModal}
-             p={p}
-               />
+              <Post
+                handleLike={handleLike}
+                index={index}
+                isCurrentUserPost={isCurrentUserPost}
+                openModal={openModal}
+                p={p}
+                config={config}
+              />
             );
           })}
 
-          <StyledModal appElement={document.getElementById('root')} isOpen={openedModal} style={customStyles}>
+          <StyledModal
+            appElement={document.getElementById("root")}
+            isOpen={openedModal}
+            style={customStyles}
+          >
             <p>
               Are you sure you want <br /> to delete this post?
             </p>
@@ -194,7 +172,6 @@ const ContainerTimeline = styled.div`
     display: none;
   }
 `;
-
 
 const customStyles = {
   content: {

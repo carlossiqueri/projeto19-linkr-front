@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import SearchPeople from "../components/HomeComponents/SearchPeople.js"
+import SearchPeople from "../components/HomeComponents/SearchPeople.js";
+import { InfoContext } from "../context/InfoContext.js";
+import { useContext } from "react";
 
 export default function Header({ setIsAuthenticated, setSession }) {
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ export default function Header({ setIsAuthenticated, setSession }) {
     : "chevron-down-outline";
   const menuRef = React.useRef();
   const imgRef = React.useRef();
+  const { userInfo } = useContext(InfoContext);
 
   function toggleLogoutMenu(e) {
     setIsOpenMenu((prevState) => !prevState);
@@ -46,10 +49,12 @@ export default function Header({ setIsAuthenticated, setSession }) {
 
       <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
-        <ion-icon name={typeIonIcon}></ion-icon> <img data-test="avatar" />
+        <ion-icon name={typeIonIcon}></ion-icon>{" "}
+        <img data-test="avatar" src={userInfo.picture_url} alt="" />
       </span>
 
-      <div data-test="menu"
+      <div
+        data-test="menu"
         onClick={handleLogout}
         ref={menuRef}
         style={{ display: isOpenMenu ? "initial" : "none" }}
@@ -84,11 +89,10 @@ const HeaderContainer = styled.section`
     margin-left: 28px;
   }
 
-  
-  .Title{
+  .Title {
     margin-left: 28px;
   }
-  
+
   span {
     font-size: 25px;
     display: flex;
