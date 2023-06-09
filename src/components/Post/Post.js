@@ -3,7 +3,14 @@ import PostDescription from "../PostDescription/PostDescription";
 import { TbTrashFilled } from "react-icons/tb";
 import { AiFillEdit } from "react-icons/ai";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
+import { ColorRing } from "react-loader-spinner";
+import ReactModal from "react-modal";
+import PostReposts from "../RepostsComponents/PostReposts";
+import { useContext } from "react";
+import { InfoContext } from "../../context/InfoContext";
+import axios from "axios";
 
 export default function Post({
   p,
@@ -12,10 +19,43 @@ export default function Post({
   index,
   handleLike,
 }) {
+
   const [edited, setEdited] = useState(false);
+  const [share, setShare] = useState(false);
+  const [repostCount, setRepostCount] = useState(0);
+  const [openedModal, setOpenedModal] = useState(false);
+
+  const { token } = useContext(InfoContext);
+
+  function sharePost(id){
+    setShare(true);
+   setTimeout(() => {
+
+    const urlRepost = `${process.env.REACT_APP_API_URL}/posts/${id}`;
+    const config = {
+     headers : {
+      Authorization: `Bearer ${token}`
+     }
+    };
+
+    const promise = axios.post(urlRepost, {}, config);
+    promise.then((res) => {
+      setOpenedModal(false);
+      setShare(false);
+      setRepostCount(repostCount + 1);
+    });
+    promise.catch((err) => {
+      console.log(err.response.data.mensagem);
+      alert("Não foi possível repostar o post");
+      setOpenedModal(false);
+      setShare(false);
+    })
+   }, 1500);
+  }
 
   return (
     <Wrapper key={index}>
+      <PostReposts />
       <ContainerLike>
         <PostOwnerImg src={p.user_picture} />
         {p.liked_by ? (
@@ -24,6 +64,13 @@ export default function Post({
           <AiOutlineHeart onClick={() => handleLike(p.id)} />
         )}
         <p>{p.like_count} likes</p>
+
+        <BiRepost
+        size={25}
+        onClick={() => setOpenedModal(true)}
+         />
+         <p> re-post</p>
+
       </ContainerLike>
       <div>
         <PostOwner>
@@ -65,7 +112,41 @@ export default function Post({
           <LinkImg src={p.url_picture} />
         </PostLink>
       </div>
+
+      <StyledModal appElement={document.getElementById('root')} isOpen={openedModal} style={customStyles}>
+            <p>
+              Do you want to re-post <br /> this link?
+            </p>
+
+            {share ? (
+              <ColorRing
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={[
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                  "#FFFFFF",
+                ]}
+              />
+            ) : (
+              <div>
+                <WhiteButton onClick={() => setOpenedModal(false)}>
+                  No, cancel
+                </WhiteButton>
+                <BlueButton onClick={()=> sharePost(p.id)}>Yes, share!</BlueButton>
+              </div>
+            )}
+          </StyledModal>
+
     </Wrapper>
+    
   );
 }
 
@@ -77,6 +158,8 @@ const Wrapper = styled.div`
   border-radius: 16px;
   margin-bottom: 30px;
 `;
+
+
 const PostOwnerImg = styled.img`
   width: 50px;
   height: 50px;
@@ -163,6 +246,74 @@ const ContainerLike = styled.div`
   p {
     font-size: 11px;
     font-family: "Lato", sans-serif;
+    font-weight: 400;
+    line-height: 13.2px;
     margin-top: 4px;
+    margin-bottom: 10px;
   }
+`;
+
+const customStyles = {
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "25%",
+    backgroundColor: "#333333",
+    margin: "auto",
+    borderRadius: "50px",
+    padding: "20px",
+
+    fontFamily: "Lato",
+    fontSize: "20px",
+    fontWeight: "700",
+    lineHeight: "25.8px",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  overlay: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    zIndex: "2",
+  },
+};
+
+const StyledModal = styled(ReactModal)`
+  ${customStyles.content}
+
+  div {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+`;
+
+const BlueButton = styled.button`
+  background-color: #1877f2;
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+  width: 112px;
+  margin-left: 20px;
+`;
+const WhiteButton = styled.button`
+  background-color: white;
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16.8px;
+  color: #1877f2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 5px;
+  width: 112px;
 `;
