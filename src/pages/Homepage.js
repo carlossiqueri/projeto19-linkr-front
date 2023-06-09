@@ -10,7 +10,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
   const { token, profileImage, setRefresh } = useContext(InfoContext);
-  
+
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,7 +42,6 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       promise.finally(() => {
         setDisabled(false);
         setRefresh(true);
-        
       });
     }, 3000);
   }
@@ -94,8 +93,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
           </div>
         </span>
       </FeedContainer>
-
-
+      
       <PostContainer />
       <HashtagsTrending />
     </HomepageContainer>
@@ -212,5 +210,30 @@ const FeedContainer = styled.div`
         margin-left: 400px;
       }
     }
+  }
+`;
+
+const UpdatePosts = styled.div`
+  width: 611px;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #ffffff;
+    margin-right: 10px;
+  }
+  :hover{
+    cursor: pointer;
+    background: #0456bf;
   }
 `;
