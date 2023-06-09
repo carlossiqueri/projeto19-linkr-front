@@ -36,8 +36,9 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         setSession(res.data.token);
         localStorage.setItem("token", res.data.token);
         setIsAuthenticated(true);
-        setToken(res.data.token);
+        setToken(localStorage.getItem('token'));
         setCurrentUserId(res.data.userId);
+        console.log(res.data)
         navigate("/timeline");
       }
     } catch (err) {

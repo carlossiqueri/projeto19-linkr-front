@@ -9,7 +9,8 @@ import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrend
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token, profileImage } = useContext(InfoContext);
+  const { token, profileImage, setRefresh } = useContext(InfoContext);
+  
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,6 +41,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       });
       promise.finally(() => {
         setDisabled(false);
+        setRefresh(true);
+        
       });
     }, 3000);
   }
@@ -91,6 +94,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
           </div>
         </span>
       </FeedContainer>
+
 
       <PostContainer />
       <HashtagsTrending />
