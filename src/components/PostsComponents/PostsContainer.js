@@ -13,9 +13,6 @@ import { TfiReload } from "react-icons/tfi";
 import { useRef } from "react";
 
 export default function PostContainer({ post, setPost }) {
-  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
-  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
-  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
   const [initialPosts, setInitialPosts] = useState(null);
   const [count, setCount] = useState(null);
   const [update, setUpdate] = useState(null);
