@@ -225,6 +225,7 @@ const PostLink = styled.div`
 const LinkInfo = styled.div`
   margin-top: 20px;
   margin-left: 20px;
+  max-width: 300px;
   h3 {
     font-weight: 400;
     font-size: 16px;
