@@ -38,12 +38,13 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         localStorage.setItem("userId", res.data.userId);
         setIsAuthenticated(true);
         console.log(res.data);
-        setToken(res.data.token);
         setCurrentUserId(res.data.userId);
         const resUser = await axios.get(`${serverUrl}/user/${res.data.userId}`);
         setUserInfo(resUser.data[0]);
         console.log(`${serverUrl}/user/${res.data.userId}`);
         console.log(resUser.data[0]);
+        setToken(localStorage.getItem('token'));
+
         navigate("/timeline");
       }
     } catch (err) {

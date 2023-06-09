@@ -8,30 +8,41 @@ import { InfoContext } from "../../context/InfoContext";
 import ReactModal from "react-modal";
 import { ColorRing } from "react-loader-spinner";
 import Post from "../Post/Post";
+import useInterval from "use-interval";
+import { TfiReload } from "react-icons/tfi";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function PostContainer({ post, setPost, refresh }) {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
+  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
+  const [post, setPost] = useState([]);
+  const [initialPosts, setInitialPosts] = useState(null);
+  const [count, setCount] = useState(null);
+  const [update, setUpdate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [liked, setLiked] = useState(false);
   const [openedModal, setOpenedModal] = useState(false);
   const [delected, setDelected] = useState(false);
   const [postId, setPostId] = useState(null);
 
-  const { token, currentUserId } = useContext(InfoContext);
+  const { token, currentUserId, setProfileImage, setRefresh, refresh } =
+    useContext(InfoContext);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  useEffect(() => {
-    setIsLoading(true);
+  const getTwentyPosts = () => {
     axios
       .get(urlTimeline, config)
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
+        setProfileImage(res.data.user_picture);
+        console.log(res.data);
+        setRefresh(false);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -40,7 +51,47 @@ export default function PostContainer({ post, setPost, refresh }) {
         );
         console.log(err.response.data);
       });
+  };
+
+  const getNumberOfAllPosts = () => {
+    axios
+      .get(urlTimelineCount)
+      .then((res) => {
+        setCount(res.data);
+        setInitialPosts(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getTwentyPosts();
+    getNumberOfAllPosts();
   }, [refresh]);
+
+  //START: Utilização do hook useInterval para barra de update posts
+
+  useInterval(() => {
+    if (initialPosts !== count) {
+      setUpdate(count - initialPosts);
+      console.log(update);
+    }
+  }, 15000);
+
+  useInterval(() => {
+    axios
+      .get(urlTimelineCount)
+      .then((res) => {
+        setCount(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  }, 3000);
+
+  //END: Utilização do hook useInterval para barra de update posts
 
   function handleLike(id) {
     axios
@@ -76,6 +127,7 @@ export default function PostContainer({ post, setPost, refresh }) {
         setDelected(false);
         setOpenedModal(false);
         console.log("finalmente!!!!");
+        setRefresh(true);
       });
       promise.catch((err) => {
         console.log(err.response.data.mensagem);
@@ -97,6 +149,18 @@ export default function PostContainer({ post, setPost, refresh }) {
         </ContainerLoader>
       ) : (
         <ContainerTimeline>
+          {update !== null ? (
+            <UpdatePosts
+              setUpdate={setUpdate}
+              onClick={() => {
+                setRefresh(true);
+                setUpdate(null);
+              }}
+            >
+              <p>{update} new posts, load more! </p>
+              <TfiReload size={22} color="white" />
+            </UpdatePosts>
+          ) : null}
           {post.map((p, index) => {
             const isCurrentUserPost = p.user_id === currentUserId;
             return (
@@ -110,7 +174,6 @@ export default function PostContainer({ post, setPost, refresh }) {
               />
             );
           })}
-
           <StyledModal
             appElement={document.getElementById("root")}
             isOpen={openedModal}
@@ -236,4 +299,29 @@ const WhiteButton = styled.button`
   cursor: pointer;
   padding: 5px;
   width: 112px;
+`;
+
+const UpdatePosts = styled.div`
+  width: 611px;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #ffffff;
+    margin-right: 10px;
+  }
+  :hover {
+    cursor: pointer;
+    background: #0456bf;
+  }
 `;

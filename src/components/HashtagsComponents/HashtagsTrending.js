@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
 
+
 export function HashtagsTrending() {
   const navigate = useNavigate();
   const [ladder, setLadder] = useState([]);
@@ -50,8 +51,16 @@ const ContainerLadder = styled.div`
   position: absolute;
   width: 301px;
   height: 406px;
-  right: 1%;
-  top: 319px;
+  right: 20%;
+  top: 24.5%;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
   background: #171717;
   border-radius: 16px;

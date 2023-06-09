@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import SearchPeople from "../components/HomeComponents/SearchPeople.js";
 import { InfoContext } from "../context/InfoContext.js";
 import { useContext } from "react";
@@ -45,7 +45,7 @@ export default function Header({ setIsAuthenticated, setSession }) {
 
   return (
     <HeaderContainer>
-      <p className="Title">linkr</p>
+      <Link to={"/timeline"}><p className="Title">linkr</p></Link>
 
       <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
@@ -78,6 +78,18 @@ const HeaderContainer = styled.section`
   top: 0;
   left: 0;
   z-index: 1;
+
+  a {
+    text-decoration: none;
+    font-family: "Passion One";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 49px;
+    line-height: 54px;
+    letter-spacing: 0.05em;
+    margin-left: 28px;
+    color:white;
+  }
 
   p {
     font-family: "Passion One";

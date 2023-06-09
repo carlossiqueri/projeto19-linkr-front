@@ -12,6 +12,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
   const { token, userInfo } = useContext(InfoContext);
   const [post, setPost] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const { profileImage, setRefresh } = useContext(InfoContext);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,10 +43,8 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     });
     promise.finally(() => {
       setDisabled(false);
+      setRefresh(true);
     });
-
-    console.log("posts ao criar um post:", post);
-    console.log("post criado");
   }
 
   return (
@@ -97,6 +96,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       </FeedContainer>
 
       <PostContainer post={post} setPost={setPost} refresh={refresh} />
+
       <HashtagsTrending />
     </HomepageContainer>
   );
@@ -212,5 +212,30 @@ const FeedContainer = styled.div`
         margin-left: 400px;
       }
     }
+  }
+`;
+
+const UpdatePosts = styled.div`
+  width: 611px;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #ffffff;
+    margin-right: 10px;
+  }
+  :hover{
+    cursor: pointer;
+    background: #0456bf;
   }
 `;

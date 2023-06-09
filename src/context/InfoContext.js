@@ -8,6 +8,8 @@ export const InfoProvider = ({ children }) => {
   const [profileImage, setProfileImage] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
   const [userInfo, setUserInfo] = useState(null);
+  const [userId, setUserId] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   return (
     <InfoContext.Provider
@@ -20,6 +22,10 @@ export const InfoProvider = ({ children }) => {
         setCurrentUserId,
         userInfo,
         setUserInfo,
+        userId,
+        setUserId,
+        refresh,
+        setRefresh
       }}
     >
       {children}
