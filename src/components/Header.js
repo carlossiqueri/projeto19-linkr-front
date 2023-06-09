@@ -50,7 +50,7 @@ export default function Header({ setIsAuthenticated, setSession }) {
       <SearchPeople />
       <span ref={imgRef} onClick={toggleLogoutMenu}>
         <ion-icon name={typeIonIcon}></ion-icon>{" "}
-        <img data-test="avatar" src={userInfo.picture_url} alt="" />
+        <img data-test="avatar" src={userInfo.user_picture} alt="" />
       </span>
 
       <div
@@ -115,7 +115,6 @@ const HeaderContainer = styled.section`
       width: 53px;
       height: 53px;
       border-radius: 26.5px;
-      background-color: purple;
       margin-right: 17px;
       margin-left: 16.3px;
     }

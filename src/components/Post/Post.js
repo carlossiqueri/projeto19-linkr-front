@@ -25,6 +25,7 @@ export default function Post({
 }) {
 
   const [edited, setEdited] = useState(false);
+
   const { userId, setUserId, token } = useContext(InfoContext);
   const [share, setShare] = useState(false);
   const [repostCount, setRepostCount] = useState(0);
@@ -74,6 +75,7 @@ export default function Post({
 
   return (
     <WrapperContainer>
+       <PostReposts />
       <Wrapper key={index}>
         <InteractionsPostContainer>
           <PostOwnerImg src={p.user_picture} />
@@ -218,11 +220,9 @@ const PostOwner = styled.p`
   font-size: 19px;
   line-height: 23px;
   color: #ffffff;
-  margin-top: 10px;
-  margin-bottom: 7px;
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: center;
+  justify-content: space-between;
 
   a {
     text-decoration: none;
@@ -231,7 +231,6 @@ const PostOwner = styled.p`
     font-size: 19px;
     line-height: 23px;
     color: #ffffff;
-    margin-top: 20px;
     margin-bottom: 7px;
     display: flex;
     align-items: center;

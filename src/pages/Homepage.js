@@ -9,10 +9,9 @@ import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrend
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token, userInfo } = useContext(InfoContext);
+  const { token, userInfo, setRefresh } = useContext(InfoContext);
   const [post, setPost] = useState([]);
   const [refresh] = useState(false);
-  const { profileImage, setRefresh } = useContext(InfoContext);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,6 +47,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
   }
 
   return (
+    <Wrapper>
     <HomepageContainer>
       <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
@@ -55,7 +55,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         <p>timeline</p>
 
         <span data-test="publish-box">
-          <img src={userInfo.picture_url} alt="" />
+          <img src={userInfo.user_picture} alt="" />
           <div>
             <p>What are you going to share today?</p>
 
@@ -96,19 +96,23 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
       </FeedContainer>
 
       <PostContainer post={post} setPost={setPost} refresh={refresh} />
-
-      <HashtagsTrending />
     </HomepageContainer>
+
+    <HashtagsTrending />
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+display: flex;
+justify-content: center;
+`
 
 const HomepageContainer = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #333333;
-  width: 100%;
-  height: 100%;
 `;
 
 const FeedContainer = styled.div`

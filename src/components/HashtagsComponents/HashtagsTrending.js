@@ -44,15 +44,15 @@ export function HashtagsTrending() {
   );
 }
 
+
+
 const ContainerLadder = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: start;
-  position: absolute;
   width: 301px;
   height: 406px;
-  right: 20%;
-  top: 24.5%;
+  margin-top: 250px;
+  margin-left: 25px;
   overflow-y: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -69,6 +69,10 @@ const ContainerLadder = styled.div`
     border-bottom: 1px solid #484848;
     margin-top: 12px;
   }
+  @media (max-width: 1100px) {
+    display: none;
+  }
+ 
 `;
 
 const LadderTittle = styled.h1`
