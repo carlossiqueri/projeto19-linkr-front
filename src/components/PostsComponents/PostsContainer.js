@@ -12,7 +12,7 @@ import useInterval from "use-interval";
 import { TfiReload } from "react-icons/tfi";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-export default function PostContainer({ post, setPost, refresh }) {
+export default function PostContainer({ post, setPost }) {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
   const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
