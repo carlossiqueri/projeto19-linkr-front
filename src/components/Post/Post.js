@@ -26,13 +26,20 @@ export default function Post({
 
   const [edited, setEdited] = useState(false);
 
-  const { userId, setUserId, token } = useContext(InfoContext);
+  const { userId, setUserId, token, setRefresh } = useContext(InfoContext);
   const [share, setShare] = useState(false);
+  const [hasShared, setHasShared] = useState(false);
   const [repostCount, setRepostCount] = useState(0);
   const [openedModal, setOpenedModal] = useState(false);
 
   function sharePost(id){
+    if(hasShared === true){
+      setOpenedModal(false);
+      setShare(false);
+      return;
+    }
     setShare(true);
+    
    setTimeout(() => {
 
     const urlRepost = `${process.env.REACT_APP_API_URL}/posts/${id}`;
@@ -41,12 +48,15 @@ export default function Post({
       Authorization: `Bearer ${token}`
      }
     };
+    console.log(urlRepost);
 
     const promise = axios.post(urlRepost, {}, config);
     promise.then((res) => {
       setOpenedModal(false);
       setShare(false);
       setRepostCount(repostCount + 1);
+      setRefresh(true);
+      setHasShared(true);
     });
     promise.catch((err) => {
       console.log(err.response.data.mensagem);
@@ -75,32 +85,33 @@ export default function Post({
 
   return (
     <WrapperContainer>
-       <PostReposts />
-      <Wrapper key={index}>
+       <PostReposts hasShared={hasShared} username={p.username} />
+      <Wrapper data-test="post" key={index}>
         <InteractionsPostContainer>
           <PostOwnerImg src={p.user_picture} />
           {p.liked_by ? (
-            <AiFillHeart onClick={() => handleLike(p.id)} />
+            <AiFillHeart data-test="like-btn" onClick={() => handleLike(p.id)} />
           ) : (
             <AiOutlineHeart onClick={() => handleLike(p.id)} />
           )}
-          <p>{p.like_count} likes</p>
+          <p data-test="counter">{p.like_count} likes</p>
 
-          <AiOutlineComment
+          <AiOutlineComment data-test="comment-btn"
             onClick={() => setOpenComment((prevState) => !prevState)}
           />
-          <p>{comments.length} comments</p>
+          <p data-test="comment-counter">{comments.length} comments</p>
 
           <BiRepost
+        data-test="repost-btn"
         size={25}
-        onClick={() => setOpenedModal(true)}
+        onClick={() => {setOpenedModal(true)}}
          />
-         <p> re-post</p>
+         <p data-test="repost-counter"> {p.reposts_count} re-post</p>
         </InteractionsPostContainer>
         <div>
           <PostOwner>
             {
-            <Link onClick={() => setUserId(`${p.user_id}`)} to={`/user`}>
+            <Link data-test="username" onClick={() => setUserId(`${p.user_id}`)} to={`/user`}>
               {p.username}
             </Link>
             }
@@ -108,12 +119,14 @@ export default function Post({
               {isCurrentUserPost && (
                 <>
                   <AiFillEdit
+                    data-test="edit-btn"
                     color="white"
                     size={15}
                     onClick={() => setEdited(true)}
                   />
 
                   <TbTrashFilled
+                    data-test="delete-btn"
                     color="white"
                     size={15}
                     onClick={() => openModal(p.id)}
@@ -166,10 +179,13 @@ export default function Post({
               />
             ) : (
               <div>
-                <WhiteButton onClick={() => setOpenedModal(false)}>
+                <WhiteButton data-test="cancel" onClick={() => setOpenedModal(false)}>
                   No, cancel
                 </WhiteButton>
-                <BlueButton onClick={()=> sharePost(p.id)}>Yes, share!</BlueButton>
+                <BlueButton data-test="confirm" onClick={()=> {
+                  sharePost(p.id)
+                  setHasShared(true);
+                }}>Yes, share!</BlueButton>
               </div>
             )}
           </StyledModal>
@@ -209,7 +225,6 @@ const WrapperContainer = styled.div`
 const PostOwnerImg = styled.img`
   width: 50px;
   height: 50px;
-  background-color: purple;
   border-radius: 26.5px;
   margin-bottom: 15px;
 `;
@@ -296,6 +311,15 @@ const InteractionsPostContainer = styled.div`
   align-items: center;
   font-size: 20px;
   color: #ffffff;
+
+  span{
+    display: flex;
+    font-size: 11px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    line-height: 13.2px;
+
+  }
 
   svg:hover {
     cursor: pointer;

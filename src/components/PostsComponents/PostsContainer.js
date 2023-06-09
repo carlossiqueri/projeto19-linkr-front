@@ -28,8 +28,13 @@ export default function PostContainer({ post, setPost }) {
   const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
   const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
 
-  const { token, currentUserId, setProfileImage, setRefresh, refresh } =
-    useContext(InfoContext);
+  const { 
+    token, 
+    currentUserId, 
+    setProfileImage, 
+    setRefresh, 
+    refresh } = useContext(InfoContext);
+
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -91,7 +96,7 @@ export default function PostContainer({ post, setPost }) {
   useInterval(() => {
     if (initialPosts !== count) {
       setUpdate(count - initialPosts);
-      console.log(update);
+     
     }
   }, 15000);
 
@@ -217,10 +222,10 @@ export default function PostContainer({ post, setPost }) {
               />
             ) : (
               <div>
-                <WhiteButton onClick={() => setOpenedModal(false)}>
+                <WhiteButton data-test="cancel" onClick={() => setOpenedModal(false)}>
                   No, go back
                 </WhiteButton>
-                <BlueButton onClick={deletePost}>Yes, delete it</BlueButton>
+                <BlueButton data-test="confirm" onClick={deletePost}>Yes, delete it</BlueButton>
               </div>
             )}
           </StyledModal>

@@ -6,9 +6,10 @@ import { ThreeDots } from "react-loader-spinner";
 import { useContext } from "react";
 import { InfoContext } from "../../context/InfoContext";
 import Post from "../Post/Post";
+import { HashtagsTrending } from "../HashtagsComponents/HashtagsTrending";
 
 export default function UserContainer() {
-  const { userId, setUserId } = useContext(InfoContext);
+  const { userId, setUserId, token, currentUserId } = useContext(InfoContext);
   const urlUser = `${process.env.REACT_APP_API_URL}/user/${userId}`;
   const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
   const [liked, setLiked] = useState(false);
@@ -18,24 +19,24 @@ export default function UserContainer() {
   const [postId, setPostId] = useState(null);
   const [image, setImage] =useState("");
   const [name, setName] = useState("");
+  const [follow, setFollow]= useState(false);
 
-  const { token, currentUserId } = useContext(InfoContext);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
-    },
+    }
   };
-
+  
   useEffect(() => {
     setIsLoading(true);
-    console.log(urlUser);
+    
     axios
-      .get(urlUser)
+      .get(urlUser, config)
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
         setName(res.data[0].username);
-        setImage(res.data[0].picture_url);
+        setImage(res.data[0].user_picture);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -66,6 +67,18 @@ export default function UserContainer() {
     setPostId(id);
   }
 
+  function handleFollow(){
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/user/${userId}/follow`, {}, config)
+    .then(()=> {
+      setFollow(!follow);
+    })
+    .catch((err)=> {
+      console.log(err.response.data);
+    });
+
+  }
+
   return (
     <>
       {isLoading ? (
@@ -73,12 +86,18 @@ export default function UserContainer() {
           <ThreeDots width={100} height={100} color="#FFFFFF" />
         </ContainerLoader>
       ) : (
-        <>
-          <Title>
+        <Wrapper>
+        <ProfileContainer>
+        <Title>
             <img src={image}/>
             <h1>{name}</h1>
           </Title>
-          <ContainerTimeline>
+         { follow ?  (<ButtonFollow data-test="follow-btn" onClick={()=> handleFollow(userId)}>Follow</ButtonFollow>
+         ) : (<ButtonUnfollow data-test="follow-btn" onClick={()=> handleFollow(userId)}>Unfollow</ButtonUnfollow>)
+         }
+        </ProfileContainer>
+        
+          <ContainerTimeline data-test="post">
             {post.map((p, index) => {
               const isCurrentUserPost = p.user_id === currentUserId;
               return (
@@ -88,19 +107,85 @@ export default function UserContainer() {
                   isCurrentUserPost={isCurrentUserPost}
                   openModal={openModal}
                   p={p}
+                  config={config}
                 />
               );
             })}
           </ContainerTimeline>
-          </>
+          <HashtagsTrending />
+          </Wrapper>
       )}
     </>
   );
 }
 
+const Wrapper = styled.div`
+display: grid;
+grid-template-columns: 2fr 1fr;
+max-width:max-content;
+align-items: start;
+
+
+& > :first-child{
+
+grid-column: 1/-1;
+}
+
+& > :nth-child(2){
+  grid-row: 2;
+}
+& > :nth-child(3){
+  grid-row: 2;
+  margin-top: 40px;
+}
+
+`
+
 const ContainerLoader = styled.div`
   margin-top: 30px;
 `;
+
+const ProfileContainer = styled.div`
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+
+`
+
+const ButtonFollow = styled.button`
+background-color: #1877f2;
+color: #ffffff;
+font-family: "Lato", sans-serif;
+font-weight: 700;
+font-size: 14px;
+line-height: 16.8px;
+  
+border: none;
+border-radius: 5px;
+cursor: pointer;
+margin-top: 125px;
+padding: 5px;
+width: 112px;
+height: 31px;
+`
+
+const ButtonUnfollow = styled.button`
+background-color: #FFFFFF;
+color: #1877F2;
+font-family: "Lato", sans-serif;
+font-weight: 700;
+font-size: 14px;
+line-height: 16.8px;
+  
+border: none;
+border-radius: 5px;
+cursor: pointer;
+margin-top: 125px;
+padding: 5px;
+width: 112px;
+height: 31px;
+`
 
 const Title = styled.div`
   display: flex;
