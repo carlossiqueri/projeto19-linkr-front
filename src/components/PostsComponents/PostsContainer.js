@@ -8,33 +8,41 @@ import { InfoContext } from "../../context/InfoContext";
 import ReactModal from "react-modal";
 import { ColorRing } from "react-loader-spinner";
 import Post from "../Post/Post";
+import useInterval from "use-interval";
+import { TfiReload } from "react-icons/tfi";
+import { useRef } from "react";
 
-export default function PostContainer() {
-  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
-  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`
-  const [post, setPost] = useState([]);
+export default function PostContainer({ post, setPost }) {
+  const [initialPosts, setInitialPosts] = useState(null);
+  const [count, setCount] = useState(null);
+  const [update, setUpdate] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [liked, setLiked] = useState(false);
   const [openedModal, setOpenedModal] = useState(false);
   const [delected, setDelected] = useState(false);
   const [postId, setPostId] = useState(null);
+  const liInfiniteScrollRef = useRef(null);
 
-  const { token, currentUserId, setProfileImage, setRefresh, refresh } = useContext(InfoContext);
+  const urlTimeline = `${process.env.REACT_APP_API_URL}/posts?page=${currentPage}`;
+  const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
+  const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
+
+  const { token, currentUserId, setProfileImage, setRefresh, refresh } =
+    useContext(InfoContext);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  useEffect(() => {
-    setIsLoading(true);
+  const getTenPosts = () => {
     axios
       .get(urlTimeline, config)
       .then((res) => {
         setIsLoading(false);
         setPost(res.data);
-        // setProfileImage(res.data.user_picture);
-        console.log(res.data);
+        setProfileImage(res.data.user_picture);
         setRefresh(false);
       })
       .catch((err) => {
@@ -44,31 +52,84 @@ export default function PostContainer() {
         );
         console.log(err.response.data);
       });
-  }, [refresh]);
+  };
 
-  function handleLike(id) {    
+
+  const getNumberOfAllPosts = () => {
     axios
-    .post(`${urlLikePost}${id}`, {}, config)
-    .then( () => {
-      setLiked(!liked)
+      .get(urlTimelineCount)
+      .then((res) => {
+        setCount(res.data);
+        setInitialPosts(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getTenPosts();
+    getNumberOfAllPosts();
+    liInfiniteScrollRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [refresh, currentPage]);
+
+
+  useEffect(() => {
+    const intersectionObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        setCurrentPage((currentValue) => currentValue + 1);
+      }
     })
-    .catch((err) => {
-      setIsLoading(false);
-      alert(
-        "An error occured while trying to fetch the posts, please refresh the page"
-      );
-      console.log(err.response.data);
-    });
+    if(liInfiniteScrollRef.current){
+      intersectionObserver.observe(liInfiniteScrollRef.current);
+    }
+    return () => intersectionObserver.disconnect();
+  }, [liInfiniteScrollRef]);
+  //START: Utilização do hook useInterval para barra de update posts
+
+  useInterval(() => {
+    if (initialPosts !== count) {
+      setUpdate(count - initialPosts);
+      console.log(update);
+    }
+  }, 15000);
+
+  useInterval(() => {
+    axios
+      .get(urlTimelineCount)
+      .then((res) => {
+        setCount(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  }, 3000);
+
+  //END: Utilização do hook useInterval para barra de update posts
+
+  function handleLike(id) {
+    axios
+      .post(`${urlLikePost}${id}`, {}, config)
+      .then(() => {
+        setLiked(!liked);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page"
+        );
+        console.log(err.response.data);
+      });
   }
 
-    function openModal(id) {
-      setOpenedModal(true);
-      setPostId(id);
-    }
+  function openModal(id) {
+    setOpenedModal(true);
+    setPostId(id);
+  }
 
-  
-    function deletePost() {
-      setDelected(true);
+  function deletePost() {
+    setDelected(true);
     setTimeout(() => {
       const urlDelete = `${process.env.REACT_APP_API_URL}/posts/${postId}`;
       const config = {
@@ -82,7 +143,6 @@ export default function PostContainer() {
         setOpenedModal(false);
         console.log("finalmente!!!!");
         setRefresh(true);
-
       });
       promise.catch((err) => {
         console.log(err.response.data.mensagem);
@@ -96,7 +156,6 @@ export default function PostContainer() {
     }, 1500);
   }
 
-
   return (
     <>
       {isLoading ? (
@@ -105,21 +164,36 @@ export default function PostContainer() {
         </ContainerLoader>
       ) : (
         <ContainerTimeline>
+          {update !== null ? (
+            <UpdatePosts
+              setUpdate={setUpdate}
+              onClick={() => {
+                setRefresh(true);
+                setUpdate(null);
+              }}
+            >
+              <p>{update} new posts, load more! </p>
+              <TfiReload size={22} color="white" />
+            </UpdatePosts>
+          ) : null}
           {post.map((p, index) => {
-            const isCurrentUserPost = p.user_id  === currentUserId;
-            
+            const isCurrentUserPost = p.user_id === currentUserId;
             return (
-             <Post 
-             handleLike={handleLike} 
-             index={index} 
-             isCurrentUserPost={isCurrentUserPost} 
-             openModal={openModal}
-             p={p}
-               />
+              <Post
+                handleLike={handleLike}
+                index={index}
+                isCurrentUserPost={isCurrentUserPost}
+                openModal={openModal}
+                p={p}
+                config={config}
+              />
             );
           })}
-
-          <StyledModal appElement={document.getElementById('root')} isOpen={openedModal} style={customStyles}>
+          <StyledModal
+            appElement={document.getElementById("root")}
+            isOpen={openedModal}
+            style={customStyles}
+          >
             <p>
               Are you sure you want <br /> to delete this post?
             </p>
@@ -150,8 +224,10 @@ export default function PostContainer() {
               </div>
             )}
           </StyledModal>
+          
         </ContainerTimeline>
       )}
+      <li ref={liInfiniteScrollRef} />
     </>
   );
 }
@@ -166,17 +242,9 @@ const ContainerTimeline = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 30px;
-  /* configs necessarias p mostras os posts se decidirmos mudar a maneira como a hnomepage está organizada*/
-  overflow-y: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
 
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  ::-webkit-scrollbar {
-    display: none;
-  }
+ 
 `;
-
 
 const customStyles = {
   content: {
@@ -242,3 +310,29 @@ const WhiteButton = styled.button`
   padding: 5px;
   width: 112px;
 `;
+
+const UpdatePosts = styled.div`
+  width: 611px;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #ffffff;
+    margin-right: 10px;
+  }
+  :hover {
+    cursor: pointer;
+    background: #0456bf;
+  }
+`;
+

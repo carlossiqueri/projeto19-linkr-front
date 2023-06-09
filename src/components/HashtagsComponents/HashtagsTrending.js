@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
 
+
 export function HashtagsTrending() {
   const navigate = useNavigate();
   const [ladder, setLadder] = useState([]);
@@ -43,15 +44,23 @@ export function HashtagsTrending() {
   );
 }
 
+
+
 const ContainerLadder = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: start;
-  position: absolute;
   width: 301px;
   height: 406px;
-  right: 1%;
-  top: 319px;
+  margin-top: 250px;
+  margin-left: 25px;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
   background: #171717;
   border-radius: 16px;
@@ -60,6 +69,10 @@ const ContainerLadder = styled.div`
     border-bottom: 1px solid #484848;
     margin-top: 12px;
   }
+  @media (max-width: 1100px) {
+    display: none;
+  }
+ 
 `;
 
 const LadderTittle = styled.h1`

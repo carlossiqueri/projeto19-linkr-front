@@ -9,45 +9,45 @@ import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrend
 export default function Homepage({ setIsAuthenticated, setSession }) {
   const [form, setForm] = useState({ url: "", description: "" });
   const [disabled, setDisabled] = useState(false);
-  const { token, profileImage, setRefresh } = useContext(InfoContext);
-  
+  const { token, userInfo, setRefresh } = useContext(InfoContext);
+  const [post, setPost] = useState([]);
+  const [refresh] = useState(false);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function createPost(e) {
+  async function createPost(e) {
     e.preventDefault();
 
     setDisabled(true);
 
-    setTimeout(() => {
-      const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
-      const body = { url: form.url, description: form.description };
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const promise = axios.post(urlPost, body, config);
-      promise.then((res) => {
-        console.log("Deu certo!!!");
-        setForm({ url: "", description: "" });
-      });
-      promise.catch((err) => {
-        console.log(err.response.data);
-        alert("Houve um erro ao publicar seu link");
-        setDisabled(false);
-      });
-      promise.finally(() => {
-        setDisabled(false);
-        setRefresh(true);
-        
-      });
-    }, 3000);
+    const urlPost = `${process.env.REACT_APP_API_URL}/newPost`;
+    const body = { url: form.url, description: form.description };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const promise = axios.post(urlPost, body, config);
+    promise.then((res) => {
+      console.log("Deu certo!!!");
+      setForm({ url: "", description: "" });
+      setRefresh(!refresh);
+    });
+    promise.catch((err) => {
+      console.log(err.response.data);
+      alert("Houve um erro ao publicar seu link");
+      setDisabled(false);
+    });
+    promise.finally(() => {
+      setDisabled(false);
+      setRefresh(true);
+    });
   }
 
   return (
+    <Wrapper>
     <HomepageContainer>
       <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
 
@@ -55,7 +55,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         <p>timeline</p>
 
         <span data-test="publish-box">
-          <img src={profileImage} />
+          <img src={userInfo.user_picture} alt="" />
           <div>
             <p>What are you going to share today?</p>
 
@@ -95,20 +95,24 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         </span>
       </FeedContainer>
 
-
-      <PostContainer />
-      <HashtagsTrending />
+      <PostContainer post={post} setPost={setPost} refresh={refresh} />
     </HomepageContainer>
+
+    <HashtagsTrending />
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+display: flex;
+justify-content: center;
+`
 
 const HomepageContainer = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #333333;
-  width: 100%;
-  height: 100%;
 `;
 
 const FeedContainer = styled.div`
@@ -212,5 +216,30 @@ const FeedContainer = styled.div`
         margin-left: 400px;
       }
     }
+  }
+`;
+
+const UpdatePosts = styled.div`
+  width: 611px;
+  height: 61px;
+  background: #1877f2;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-family: "Lato";
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #ffffff;
+    margin-right: 10px;
+  }
+  :hover{
+    cursor: pointer;
+    background: #0456bf;
   }
 `;
