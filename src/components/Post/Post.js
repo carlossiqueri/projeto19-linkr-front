@@ -12,7 +12,6 @@ import { ColorRing } from "react-loader-spinner";
 import ReactModal from "react-modal";
 import PostReposts from "../RepostsComponents/PostReposts";
 import { useContext } from "react";
-import { InfoContext } from "../../context/InfoContext";
 import axios from "axios";
 
 export default function Post({
