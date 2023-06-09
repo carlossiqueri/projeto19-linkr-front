@@ -11,7 +11,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
   const [disabled, setDisabled] = useState(false);
   const { token, userInfo } = useContext(InfoContext);
   const [post, setPost] = useState([]);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh] = useState(false);
   const { profileImage, setRefresh } = useContext(InfoContext);
 
   function handleForm(e) {
