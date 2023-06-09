@@ -16,7 +16,6 @@ export default function PostContainer({ post, setPost, refresh }) {
   const urlTimeline = `${process.env.REACT_APP_API_URL}/posts`;
   const urlLikePost = `${process.env.REACT_APP_API_URL}/posts/like/`;
   const urlTimelineCount = `${process.env.REACT_APP_API_URL}/postsCount`;
-  const [post, setPost] = useState([]);
   const [initialPosts, setInitialPosts] = useState(null);
   const [count, setCount] = useState(null);
   const [update, setUpdate] = useState(null);
