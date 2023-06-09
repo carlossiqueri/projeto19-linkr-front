@@ -5,6 +5,9 @@ import { AiFillEdit } from "react-icons/ai";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { BiRepost } from "react-icons/bi";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { InfoContext } from "../../context/InfoContext";
+import { useContext } from "react";
 import { ColorRing } from "react-loader-spinner";
 import ReactModal from "react-modal";
 import PostReposts from "../RepostsComponents/PostReposts";
@@ -21,6 +24,10 @@ export default function Post({
 }) {
 
   const [edited, setEdited] = useState(false);
+
+  const { userId, setUserId } = useContext(InfoContext);
+
+
   const [share, setShare] = useState(false);
   const [repostCount, setRepostCount] = useState(0);
   const [openedModal, setOpenedModal] = useState(false);
@@ -53,6 +60,10 @@ export default function Post({
    }, 1500);
   }
 
+  function clickOnUsername() {
+    console.log("aqui na função");
+  }
+
   return (
     <Wrapper key={index}>
       <PostReposts />
@@ -74,7 +85,11 @@ export default function Post({
       </ContainerLike>
       <div>
         <PostOwner>
-          {p.username}
+          {
+            <Link onClick={() => setUserId(`${p.user_id}`)} to={`/user`}>
+              {p.username}
+            </Link>
+          }
           <div>
             {isCurrentUserPost && (
               <>
@@ -173,11 +188,25 @@ const PostOwner = styled.p`
   font-size: 19px;
   line-height: 23px;
   color: #ffffff;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 7px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: start;
+  justify-content: start;
+
+  a {
+    text-decoration: none;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 23px;
+    color: #ffffff;
+    margin-top: 20px;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   div {
     width: 40px;

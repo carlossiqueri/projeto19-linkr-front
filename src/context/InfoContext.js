@@ -7,6 +7,7 @@ export const InfoProvider = ({children}) => {
     const [token, setToken] = useState("");
     const [profileImage, setProfileImage] = useState("");
    const [currentUserId, setCurrentUserId] = useState("");
+   const [userId, setUserId] = useState("");
    const [refresh, setRefresh] = useState(false);
 
     return(
@@ -14,6 +15,7 @@ export const InfoProvider = ({children}) => {
         value={{token, setToken, 
             profileImage, setProfileImage,
             currentUserId, setCurrentUserId,
+            userId, setUserId,
             refresh, setRefresh
         }}
          >
