@@ -45,6 +45,7 @@ export default function SearchPeople() {
     <Search>
       <SearchInput>
         <DebounceInput
+          data-test="search"
           minLength={3}
           debounceTimeout={300}
           placeholder="Search for people"
@@ -65,7 +66,7 @@ export default function SearchPeople() {
           <Container>
             {list.map((result) => {
               return (
-                <a key={result.id} onClick={()=>
+                <a data-test="user-search" key={result.id} onClick={()=>
                   { 
                   console.log(result.id)
                   setUserId(result.id)

@@ -23,9 +23,9 @@ const Comments = ({ postInfo, comments, setComments, config }) => {
 
   if (hasFollower) usernameFlag = "• following";
   return (
-    <Wrapper>
+    <Wrapper data-test="comment-box">
       {comments ? (
-        <CommentsWrapper>
+        <CommentsWrapper data-test="comment">
           {comments.map(({ username, picture_url, content }) => (
             <li>
               <img src={picture_url} alt="" />
@@ -40,7 +40,7 @@ const Comments = ({ postInfo, comments, setComments, config }) => {
         </CommentsWrapper>
       ) : null}
       <WriteComment
-        imageUserUrl={userInfo.picture_url}
+        imageUserUrl={userInfo.user_picture}
         postInfo={postInfo}
         setComments={setComments}
         currentUserId={currentUserId}

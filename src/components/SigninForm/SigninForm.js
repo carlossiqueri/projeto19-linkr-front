@@ -57,6 +57,7 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
   return (
     <form onSubmit={handleSubmit}>
       <input
+        data-test="email"
         onChange={updateForm}
         value={form.email}
         name="email"
@@ -64,14 +65,15 @@ const SigninForm = ({ setSession, setIsAuthenticated }) => {
         placeholder="e-mail"
       />
       <input
+        data-test="sign-up-link"
         onChange={updateForm}
         value={form.password}
         name="password"
         type="password"
         placeholder="password"
       />
-      <button disabled={!activeButton}>Log In</button>
-      <Link to="/signup">First time? Create an account!</Link>
+      <button data-test="sign-up-link" disabled={!activeButton}>Log In</button>
+      <Link data-test="sign-up-link" to="/signup">First time? Create an account!</Link>
     </form>
   );
 };

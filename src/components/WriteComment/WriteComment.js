@@ -48,13 +48,14 @@ export default function WriteComment({
       <img src={imageUserUrl} alt="" />
       <form onSubmit={handleSubmit}>
         <input
+          data-test="comment-input"
           type="text"
           value={comment}
           placeholder="write a comment..."
           onChange={handleComment}
         />
         <button>
-          <AiOutlineSend />
+          <AiOutlineSend  data-test="comment-submit" />
         </button>
       </form>
     </Wrapper>

@@ -31,7 +31,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
     };
     const promise = axios.post(urlPost, body, config);
     promise.then((res) => {
-      console.log("Deu certo!!!");
+      
       setForm({ url: "", description: "" });
       setRefresh(!refresh);
     });
@@ -56,7 +56,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
 
         <span data-test="publish-box">
           <img src={userInfo.user_picture} alt="" />
-          <div>
+          <div >
             <p>What are you going to share today?</p>
 
             <form onSubmit={createPost}>
@@ -105,6 +105,7 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
 
 const Wrapper = styled.div`
 display: flex;
+flex-direction: row;
 justify-content: center;
 `
 

@@ -55,6 +55,7 @@ const SignupForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <input
+        data-test="email"
         onChange={updateForm}
         value={form.email}
         name="email"
@@ -62,6 +63,7 @@ const SignupForm = () => {
         placeholder="e-mail"
       />
       <input
+        data-test="password"
         onChange={updateForm}
         value={form.password}
         name="password"
@@ -69,6 +71,7 @@ const SignupForm = () => {
         placeholder="password"
       />
       <input
+        data-test="username"
         onChange={updateForm}
         value={form.username}
         name="username"
@@ -76,14 +79,15 @@ const SignupForm = () => {
         placeholder="username"
       />
       <input
+        data-test="picture-url"
         onChange={updateForm}
         value={form.picture_url}
         name="picture_url"
         type="url"
         placeholder="picture_url"
       />
-      <button disabled={!activeButton}>Sign Up</button>
-      <Link to="/">Switch back to log in</Link>
+      <button data-test="sign-up-btn" disabled={!activeButton}>Sign Up</button>
+      <Link data-test="login-link" to="/">Switch back to log in</Link>
     </form>
   );
 };

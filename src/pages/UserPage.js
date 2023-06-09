@@ -1,10 +1,8 @@
 import styled from "styled-components";
 import Header from "../components/Header";
 import { useContext, useState } from "react";
-import axios from "axios";
 import { InfoContext } from "../context/InfoContext.js";
 import UserContainer from "../components/UserContainer/UserContainer.js";
-import { HashtagsTrending } from "../components/HashtagsComponents/HashtagsTrending.js";
 
 export default function Homepage({ setIsAuthenticated, setSession }) {
     const [form, setForm] = useState({ url: "", description: "" });
@@ -15,7 +13,6 @@ export default function Homepage({ setIsAuthenticated, setSession }) {
         <Header setIsAuthenticated={setIsAuthenticated} setSession={setSession} />
   
         <UserContainer />
-        <HashtagsTrending />
       </UserpageContainer>
     );
   }

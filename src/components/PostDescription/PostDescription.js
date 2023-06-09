@@ -43,9 +43,10 @@ export default function PostDescription({edited, setEdited, description, id }) {
   }
 
   return (
-    <Wrapper>
+    <Wrapper data-test="description"  >
       {edited ? (
         <input
+          data-test="edit-input"
           type="text"
           value={editedDescription}
           onChange={(e) => setEditedDescription(e.target.value)}

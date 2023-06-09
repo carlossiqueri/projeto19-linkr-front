@@ -30,7 +30,7 @@ export function HashtagsTrending() {
       {isLoading ? (
         ""
       ) : (
-        <ContainerLadder  data-test="trending">
+        <ContainerLadder data-test="trending">
           <LadderTittle>trending</LadderTittle>
           <div></div>
           <LadderList >
@@ -69,7 +69,7 @@ const ContainerLadder = styled.div`
     border-bottom: 1px solid #484848;
     margin-top: 12px;
   }
-  @media (max-width: 1100px) {
+  @media (max-width: 950px) {
     display: none;
   }
  
